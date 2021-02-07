@@ -55,15 +55,12 @@ static void loop_tile_calculate_wf_hyperplane(__isl_keep loop_tile_info* loopTil
 
 static void loop_tile_create_parallel_free_schedule(__isl_keep loop_tile_info* loopTile);
 static isl_stat loop_tile_parallel_free_schedule_for_map(__isl_take isl_map *map, void *user);
-static __isl_give isl_union_map * loop_tile_space_to_parallel_free_schedule(__isl_take isl_union_map *wafefrontScheduleMap, __isl_keep loop_tile_info* loopTile, const char *tupleName, char *mapToStr, id_name wfName, int spaceInfoPos);
-static __isl_give isl_union_map* loop_tile_wf_hyperplane_to_parallel_free_schedule(__isl_take isl_union_map *wafefrontScheduleMap, __isl_keep loop_tile_info* loopTile, const char *tupleName, char *mapToStr, id_name wfName);
-
+static __isl_give isl_union_map * loop_tile_space_to_parallel_free_schedule(__isl_take isl_union_map *wafefrontScheduleMap, __isl_keep loop_tile_info* loopTile, const char *tupleName, char *mapToStr, id_name wfName);
 
 static void loop_tile_create_wafefront_schedule(__isl_keep loop_tile_info* loopTile);
 static isl_stat loop_tile_wafefront_schedule_for_map(__isl_take isl_map *map, void *user);
-static __isl_give isl_union_map * loop_tile_space_to_wafefront_schedule(__isl_take isl_union_map *wafefrontScheduleMap, __isl_keep loop_tile_info* loopTile, const char *tupleName, char *mapToStr, id_name wfName, int spaceInfoPos);
-static __isl_give isl_union_map* loop_tile_wf_hyperplane_to_wafefront_schedule(__isl_take isl_union_map *wafefrontScheduleMap, __isl_keep loop_tile_info* loopTile, const char *tupleName, char *mapToStr, id_name wfName);
 
+static __isl_give isl_union_map * loop_tile_space_to_wafefront_schedule(__isl_take isl_union_map *wafefrontScheduleMap, __isl_keep loop_tile_info* loopTile, const char *tupleName, char *mapToStr, id_name wfName);
 
 static void loop_tile_create_wafefront_code(__isl_keep loop_tile_info* loopTile);
 static void loop_tile_create_approximated_relations(__isl_keep loop_tile_info* loopTile);
@@ -953,8 +950,6 @@ static void loop_tile_create_spaces(__isl_keep loop_tile_info* loopTile){
 
 	free(spacesNames);
 
-	loopTile->daptParams->sizesDimIndex = 0;
-
 	for(int i=0; i<loopTile->hyperplaneDimSize; i++){
 		loop_tile_space_to_space_mapper(loopTile,i);
 	}
@@ -997,9 +992,8 @@ static void loop_tile_space_to_space_mapper(__isl_keep loop_tile_info* loopTile,
 	int* spaceInfoVector = spaceInfo->vector;
 	int spaceSize = loopTile->daptParams->size;
 
-	if(loopTile->daptParams->sizesDimIndex < loopTile->daptParams->sizesDim){
-		spaceSize = loopTile->daptParams->sizes[loopTile->daptParams->sizesDimIndex];
-		loopTile->daptParams->sizesDimIndex += 1;
+	if(spaceInfoPos < loopTile->daptParams->sizesDim){
+		spaceSize = loopTile->daptParams->sizes[spaceInfoPos];
 	}
 
 	equationStr[0] = '\0';
@@ -1407,6 +1401,10 @@ static void loop_tile_create_parallel_free_schedule(__isl_keep loop_tile_info* l
 		}
 		free(idNames);
 
+		idNames = loop_scop_get_id_names(loopTile->loopScop, "t", 1);
+		loopTile->iterators = isl_id_list_add(loopTile->iterators, isl_id_alloc(loopTile->loopScop->ctx,idNames[0],0));
+		free(idNames);
+
 		for(int i=loopTile->hyperplaneStartsFrom; i<loopTile->loopDimSize; i++){
 			loopTile->iterators = isl_id_list_add(loopTile->iterators, isl_id_alloc(loopTile->loopScop->ctx,loopTile->loopDimInfo[i].dimName,0));
 		}
@@ -1423,12 +1421,7 @@ static isl_stat loop_tile_parallel_free_schedule_for_map(__isl_take isl_map *map
 	char *mapToStr = str_substring(mapStr,"] -> [", "]");
 	isl_union_map *wafefrontScheduleMap = 0;
 
-	loopTile->daptParams->sizesDimIndex = 0;
-
-	for(int i=0; i<loopTile->hyperplaneDimSize; i++){
-		wafefrontScheduleMap = loop_tile_space_to_parallel_free_schedule(wafefrontScheduleMap, loopTile, tupleName, mapToStr, wfNames[0], i);
-	}
-	wafefrontScheduleMap = loop_tile_wf_hyperplane_to_parallel_free_schedule(wafefrontScheduleMap, loopTile, tupleName, mapToStr, wfNames[0]);
+	wafefrontScheduleMap = loop_tile_space_to_parallel_free_schedule(wafefrontScheduleMap, loopTile, tupleName, mapToStr, wfNames[0]);
 
 	if(!loopTile->wafefrontScheduleMap){
 		loopTile->wafefrontScheduleMap = isl_union_map_copy(wafefrontScheduleMap);
@@ -1443,8 +1436,10 @@ static isl_stat loop_tile_parallel_free_schedule_for_map(__isl_take isl_map *map
 	return isl_stat_ok;
 }
 
-static __isl_give isl_union_map* loop_tile_wf_hyperplane_to_parallel_free_schedule(__isl_take isl_union_map *wafefrontScheduleMap, __isl_keep loop_tile_info* loopTile, const char *tupleName, char *mapToStr, id_name wfName){
-	char equationStr[4096];
+static __isl_give isl_union_map * loop_tile_space_to_parallel_free_schedule(__isl_take isl_union_map *wafefrontScheduleMap, __isl_keep loop_tile_info* loopTile, const char *tupleName, char *mapToStr, id_name wfName){
+	char equationStr[65536];
+	char tmpNamesStr[512];
+	char tmpEquationStr[65536];
 
 	equationStr[0] = '\0';
 
@@ -1469,77 +1464,55 @@ static __isl_give isl_union_map* loop_tile_wf_hyperplane_to_parallel_free_schedu
 	for(int i=loopTile->hyperplaneDimSize; i<loopTile->loopDimSize; i++){
 		sprintf(&equationStr[strlen(equationStr)],", %s", "0");
 	}
+	sprintf(&equationStr[strlen(equationStr)],", t%s", wfName);
 	for(int i=loopTile->hyperplaneStartsFrom; i<loopTile->loopDimSize; i++){
 		sprintf(&equationStr[strlen(equationStr)],", %s", loopTile->loopDimInfo[i].dimName);
 	}
 
-	sprintf(&equationStr[strlen(equationStr)],"] : %s = 0", wfName);
+	tmpNamesStr[0]='\0';
+	tmpEquationStr[0]='\0';
+	sprintf(&tmpNamesStr[strlen(tmpNamesStr)]," b%s", wfName);
+	for(int spaceInfoPos=0; spaceInfoPos<loopTile->hyperplaneDimSize; spaceInfoPos++){
+		space_Info* spaceInfo = &(loopTile->spaceInfo[spaceInfoPos]);
+		int* spaceInfoVector = spaceInfo->vector;
+		int spaceSize = loopTile->daptParams->size;
 
-	sprintf(&equationStr[strlen(equationStr)]," }");
-
-	isl_debug_printf("\n#part: %s \n", equationStr );
-
-	{
-		isl_union_map* map;
-		map = isl_union_map_read_from_str(loopTile->loopScop->ctx, equationStr);
-
-		if(!wafefrontScheduleMap){
-			wafefrontScheduleMap = isl_union_map_copy(map);
+		if(spaceInfoPos < loopTile->daptParams->sizesDim){
+			spaceSize = loopTile->daptParams->sizes[spaceInfoPos];
 		}
 
-		wafefrontScheduleMap = isl_union_map_coalesce(isl_union_map_intersect(wafefrontScheduleMap, map));
+		sprintf(&tmpNamesStr[strlen(tmpNamesStr)],", b%s", spaceInfo->spaceName);
+
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"and %i * %s", spaceInfoVector[0], loopTile->loopDimInfo[0].dimName);
+		for(int i=1; i<loopTile->loopDimSize; i++){
+			sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," + %i * %s", spaceInfoVector[i], loopTile->loopDimInfo[i].dimName);
+		}
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," - b%s = 0 and ", spaceInfo->spaceName);
+
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"%i * %s", spaceSize, spaceInfo->spaceName);
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," <= b%s <= ", spaceInfo->spaceName);
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"%i * (%s + 1) - 1 ", spaceSize, spaceInfo->spaceName);
 	}
 
-	return wafefrontScheduleMap;
-}
+	sprintf(&equationStr[strlen(equationStr)],"] : exists %s : 1 = 1 %s", tmpNamesStr, tmpEquationStr );
 
-static __isl_give isl_union_map * loop_tile_space_to_parallel_free_schedule(__isl_take isl_union_map *wafefrontScheduleMap, __isl_keep loop_tile_info* loopTile, const char *tupleName, char *mapToStr, id_name wfName, int spaceInfoPos){
-	char equationStr[4096];
-	space_Info* spaceInfo = &(loopTile->spaceInfo[spaceInfoPos]);
-	int* spaceInfoVector = spaceInfo->vector;
-	int spaceSize = loopTile->daptParams->size;
+	if(loopTile->wafefrontHyperplane!=0){
+		sprintf(&equationStr[strlen(equationStr)]," and b%s = %i * b%s", wfName, get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), 0)), loopTile->spaceInfo[0].spaceName);
+		for(int spaceInfoPos=1; spaceInfoPos<loopTile->hyperplaneDimSize; spaceInfoPos++){
+			sprintf(&equationStr[strlen(equationStr)]," + %i * b%s", get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), spaceInfoPos)), loopTile->spaceInfo[spaceInfoPos].spaceName);
+		}
 
-	if(loopTile->daptParams->sizesDimIndex < loopTile->daptParams->sizesDim){
-		spaceSize = loopTile->daptParams->sizes[loopTile->daptParams->sizesDimIndex];
-		loopTile->daptParams->sizesDimIndex += 1;
+		if(loopTile->daptParams->sizeTimeTile > 0){
+			sprintf(&equationStr[strlen(equationStr)]," and %i * t%s <= b%s <= %i * (t%s + 1) - 1", loopTile->daptParams->sizeTimeTile, wfName, wfName, loopTile->daptParams->sizeTimeTile, wfName );
+		} else{
+			sprintf(&equationStr[strlen(equationStr)]," and t%s = 0", wfName);
+		}
+	}
+	else{
+		sprintf(&equationStr[strlen(equationStr)]," and t%s = 0", wfName);
 	}
 
-	equationStr[0] = '\0';
-
-	if(strlen(loopTile->domainParams)>0){
-		sprintf(&equationStr[strlen(equationStr)],"[%s] -> { ", loopTile->domainParams);
-	}
-	sprintf(&equationStr[strlen(equationStr)],"%s[%s", tupleName, loopTile->loopDimInfo[0].dimName);
-	for(int i=1; i<loopTile->loopDimSize; i++){
-		sprintf(&equationStr[strlen(equationStr)],", %s", loopTile->loopDimInfo[i].dimName);
-	}
-	sprintf(&equationStr[strlen(equationStr)],"] -> [%d", loopTile->scheduleIdx);
-
-	for(int i=0; i<loopTile->hyperplaneStartsFrom; i++){
-		sprintf(&equationStr[strlen(equationStr)],", %s", loopTile->loopDimInfo[i].dimName);
-	}
-
-	sprintf(&equationStr[strlen(equationStr)],", %s", wfName);
-
-	for(int i=0; i<loopTile->hyperplaneDimSize; i++){
-		sprintf(&equationStr[strlen(equationStr)],", %s", loopTile->spaceInfo[i].spaceName);
-	}
-	for(int i=loopTile->hyperplaneDimSize; i<loopTile->loopDimSize; i++){
-		sprintf(&equationStr[strlen(equationStr)],", %s", "0");
-	}
-	for(int i=loopTile->hyperplaneStartsFrom; i<loopTile->loopDimSize; i++){
-		sprintf(&equationStr[strlen(equationStr)],", %s", loopTile->loopDimInfo[i].dimName);
-	}
-
-	sprintf(&equationStr[strlen(equationStr)],"] : exists b%s : %i * %s", spaceInfo->spaceName, spaceInfoVector[0], loopTile->loopDimInfo[0].dimName);
-	for(int i=1; i<loopTile->loopDimSize; i++){
-		sprintf(&equationStr[strlen(equationStr)]," + %i * %s", spaceInfoVector[i], loopTile->loopDimInfo[i].dimName);
-	}
-	sprintf(&equationStr[strlen(equationStr)]," - b%s = 0 and ", spaceInfo->spaceName);
-
-	sprintf(&equationStr[strlen(equationStr)],"%i * %s", spaceSize, spaceInfo->spaceName);
-	sprintf(&equationStr[strlen(equationStr)]," <= b%s <= ", spaceInfo->spaceName);
-	sprintf(&equationStr[strlen(equationStr)],"%i * (%s + 1) - 1 }", spaceSize, spaceInfo->spaceName);
+	sprintf(&equationStr[strlen(equationStr)]," and %s = 0 }", wfName);
 
 	isl_debug_printf("\n#part: %s \n", equationStr );
 
@@ -1586,6 +1559,10 @@ static void loop_tile_create_wafefront_schedule(__isl_keep loop_tile_info* loopT
 		}
 		free(idNames);
 
+		idNames = loop_scop_get_id_names(loopTile->loopScop, "t", 1);
+		loopTile->iterators = isl_id_list_add(loopTile->iterators, isl_id_alloc(loopTile->loopScop->ctx,idNames[0],0));
+		free(idNames);
+
 		for(int i=loopTile->hyperplaneStartsFrom; i<loopTile->loopDimSize; i++){
 			loopTile->iterators = isl_id_list_add(loopTile->iterators, isl_id_alloc(loopTile->loopScop->ctx,loopTile->loopDimInfo[i].dimName,0));
 		}
@@ -1602,12 +1579,7 @@ static isl_stat loop_tile_wafefront_schedule_for_map(__isl_take isl_map *map, vo
 	char *mapToStr = str_substring(mapStr,"] -> [", "]");
 	isl_union_map *wafefrontScheduleMap = 0;
 
-	loopTile->daptParams->sizesDimIndex = 0;
-
-	for(int i=0; i<loopTile->hyperplaneDimSize; i++){
-		wafefrontScheduleMap = loop_tile_space_to_wafefront_schedule(wafefrontScheduleMap, loopTile, tupleName, mapToStr, wfNames[0], i);
-	}
-	wafefrontScheduleMap = loop_tile_wf_hyperplane_to_wafefront_schedule(wafefrontScheduleMap, loopTile, tupleName, mapToStr, wfNames[0]);
+	wafefrontScheduleMap = loop_tile_space_to_wafefront_schedule(wafefrontScheduleMap, loopTile, tupleName, mapToStr, wfNames[0]);
 
 	if(!loopTile->wafefrontScheduleMap){
 		loopTile->wafefrontScheduleMap = isl_union_map_copy(wafefrontScheduleMap);
@@ -1622,16 +1594,11 @@ static isl_stat loop_tile_wafefront_schedule_for_map(__isl_take isl_map *map, vo
 	return isl_stat_ok;
 }
 
-static __isl_give isl_union_map * loop_tile_space_to_wafefront_schedule(__isl_take isl_union_map *wafefrontScheduleMap, __isl_keep loop_tile_info* loopTile, const char *tupleName, char *mapToStr, id_name wfName, int spaceInfoPos){
-	char equationStr[4096];
-	space_Info* spaceInfo = &(loopTile->spaceInfo[spaceInfoPos]);
-	int* spaceInfoVector = spaceInfo->vector;
-	int spaceSize = loopTile->daptParams->size;
 
-	if(loopTile->daptParams->sizesDimIndex < loopTile->daptParams->sizesDim){
-		spaceSize = loopTile->daptParams->sizes[loopTile->daptParams->sizesDimIndex];
-		loopTile->daptParams->sizesDimIndex += 1;
-	}
+static __isl_give isl_union_map * loop_tile_space_to_wafefront_schedule(__isl_take isl_union_map *wafefrontScheduleMap, __isl_keep loop_tile_info* loopTile, const char *tupleName, char *mapToStr, id_name wfName){
+	char equationStr[65536];
+	char tmpNamesStr[512];
+	char tmpEquationStr[65536];
 
 	equationStr[0] = '\0';
 
@@ -1656,74 +1623,58 @@ static __isl_give isl_union_map * loop_tile_space_to_wafefront_schedule(__isl_ta
 	for(int i=loopTile->hyperplaneDimSize; i<loopTile->loopDimSize; i++){
 		sprintf(&equationStr[strlen(equationStr)],", %s", "0");
 	}
+	sprintf(&equationStr[strlen(equationStr)],", t%s", wfName);
 	for(int i=loopTile->hyperplaneStartsFrom; i<loopTile->loopDimSize; i++){
 		sprintf(&equationStr[strlen(equationStr)],", %s", loopTile->loopDimInfo[i].dimName);
 	}
 
-	sprintf(&equationStr[strlen(equationStr)],"] : exists b%s : %i * %s", spaceInfo->spaceName, spaceInfoVector[0], loopTile->loopDimInfo[0].dimName);
-	for(int i=1; i<loopTile->loopDimSize; i++){
-		sprintf(&equationStr[strlen(equationStr)]," + %i * %s", spaceInfoVector[i], loopTile->loopDimInfo[i].dimName);
-	}
-	sprintf(&equationStr[strlen(equationStr)]," - b%s = 0 and ", spaceInfo->spaceName);
+	tmpNamesStr[0]='\0';
+	tmpEquationStr[0]='\0';
+	sprintf(&tmpNamesStr[strlen(tmpNamesStr)]," b%s", wfName);
+	for(int spaceInfoPos=0; spaceInfoPos<loopTile->hyperplaneDimSize; spaceInfoPos++){
+		space_Info* spaceInfo = &(loopTile->spaceInfo[spaceInfoPos]);
+		int* spaceInfoVector = spaceInfo->vector;
+		int spaceSize = loopTile->daptParams->size;
 
-	sprintf(&equationStr[strlen(equationStr)],"%i * %s", spaceSize, spaceInfo->spaceName);
-	sprintf(&equationStr[strlen(equationStr)]," <= b%s <= ", spaceInfo->spaceName);
-	sprintf(&equationStr[strlen(equationStr)],"%i * (%s + 1) - 1 }", spaceSize, spaceInfo->spaceName);
-
-	isl_debug_printf("\n#part: %s \n", equationStr );
-
-	{
-		isl_union_map* map;
-		map = isl_union_map_read_from_str(loopTile->loopScop->ctx, equationStr);
-
-		if(!wafefrontScheduleMap){
-			wafefrontScheduleMap = isl_union_map_copy(map);
+		if(spaceInfoPos < loopTile->daptParams->sizesDim){
+			spaceSize = loopTile->daptParams->sizes[spaceInfoPos];
 		}
 
-		wafefrontScheduleMap = isl_union_map_coalesce(isl_union_map_intersect(wafefrontScheduleMap, map));
+		sprintf(&tmpNamesStr[strlen(tmpNamesStr)],", b%s", spaceInfo->spaceName);
+
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"and %i * %s", spaceInfoVector[0], loopTile->loopDimInfo[0].dimName);
+		for(int i=1; i<loopTile->loopDimSize; i++){
+			sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," + %i * %s", spaceInfoVector[i], loopTile->loopDimInfo[i].dimName);
+		}
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," - b%s = 0 and ", spaceInfo->spaceName);
+
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"%i * %s", spaceSize, spaceInfo->spaceName);
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," <= b%s <= ", spaceInfo->spaceName);
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"%i * (%s + 1) - 1 ", spaceSize, spaceInfo->spaceName);
 	}
 
-	return wafefrontScheduleMap;
-}
-
-static __isl_give isl_union_map* loop_tile_wf_hyperplane_to_wafefront_schedule(__isl_take isl_union_map *wafefrontScheduleMap, __isl_keep loop_tile_info* loopTile, const char *tupleName, char *mapToStr, id_name wfName){
-	char equationStr[4096];
-
-	equationStr[0] = '\0';
-
-	if(strlen(loopTile->domainParams)>0){
-		sprintf(&equationStr[strlen(equationStr)],"[%s] -> { ", loopTile->domainParams);
-	}
-	sprintf(&equationStr[strlen(equationStr)],"%s[%s", tupleName, loopTile->loopDimInfo[0].dimName);
-	for(int i=1; i<loopTile->loopDimSize; i++){
-		sprintf(&equationStr[strlen(equationStr)],", %s", loopTile->loopDimInfo[i].dimName);
-	}
-	sprintf(&equationStr[strlen(equationStr)],"] -> [%d", loopTile->scheduleIdx);
-
-	for(int i=0; i<loopTile->hyperplaneStartsFrom; i++){
-		sprintf(&equationStr[strlen(equationStr)],", %s", loopTile->loopDimInfo[i].dimName);
-	}
-
-	sprintf(&equationStr[strlen(equationStr)],", %s", wfName);
-
-	for(int i=0; i<loopTile->hyperplaneDimSize; i++){
-		sprintf(&equationStr[strlen(equationStr)],", %s", loopTile->spaceInfo[i].spaceName);
-	}
-	for(int i=loopTile->hyperplaneDimSize; i<loopTile->loopDimSize; i++){
-		sprintf(&equationStr[strlen(equationStr)],", %s", "0");
-	}
-	for(int i=loopTile->hyperplaneStartsFrom; i<loopTile->loopDimSize; i++){
-		sprintf(&equationStr[strlen(equationStr)],", %s", loopTile->loopDimInfo[i].dimName);
-	}
+	sprintf(&equationStr[strlen(equationStr)],"] : exists %s : 1 = 1 %s", tmpNamesStr, tmpEquationStr );
 
 	if(loopTile->wafefrontHyperplane!=0){
-		sprintf(&equationStr[strlen(equationStr)],"] : %s = %i * %s", wfName, get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), 0)), loopTile->spaceInfo[0].spaceName);
-		for(int i=1; i<loopTile->hyperplaneDimSize; i++){
-			sprintf(&equationStr[strlen(equationStr)]," + %i * %s", get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), i)), loopTile->spaceInfo[i].spaceName);
+		sprintf(&equationStr[strlen(equationStr)]," and b%s = %i * b%s", wfName, get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), 0)), loopTile->spaceInfo[0].spaceName);
+		for(int spaceInfoPos=1; spaceInfoPos<loopTile->hyperplaneDimSize; spaceInfoPos++){
+			sprintf(&equationStr[strlen(equationStr)]," + %i * b%s", get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), spaceInfoPos)), loopTile->spaceInfo[spaceInfoPos].spaceName);
 		}
-	}else{
-		sprintf(&equationStr[strlen(equationStr)],"] : %s = 0", wfName);
+		sprintf(&equationStr[strlen(equationStr)]," and %s = %i * %s", wfName, get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), 0)), loopTile->spaceInfo[0].spaceName);
+		for(int spaceInfoPos=1; spaceInfoPos<loopTile->hyperplaneDimSize; spaceInfoPos++){
+			sprintf(&equationStr[strlen(equationStr)]," + %i * %s", get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), spaceInfoPos)), loopTile->spaceInfo[spaceInfoPos].spaceName);
+		}
+
+		if(loopTile->daptParams->sizeTimeTile > 0){
+			sprintf(&equationStr[strlen(equationStr)]," and %i * t%s <= b%s <= %i * (t%s + 1) - 1", loopTile->daptParams->sizeTimeTile, wfName, wfName, loopTile->daptParams->sizeTimeTile, wfName );
+		} else{
+			sprintf(&equationStr[strlen(equationStr)]," and t%s = 0", wfName);
+		}
 	}
+	else{
+		sprintf(&equationStr[strlen(equationStr)]," and %s = 0 and t%s = 0", wfName, wfName);
+	}
+
 	sprintf(&equationStr[strlen(equationStr)]," }");
 
 	isl_debug_printf("\n#part: %s \n", equationStr );

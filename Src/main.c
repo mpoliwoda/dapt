@@ -44,6 +44,7 @@ int main(int argc, char *argv[]) {
 		printf("\t%s%s%s\n", "[size=<int>]         ", tabs, "default size (default:16)");
 		printf("\t%s%s%s\n", "[sizes=<int>]        ", tabs, "number of spaces with specified size (default:0)");
 		printf("\t%s%s%s\n", "[size<int>=<int>]    ", tabs, "specifies size list for spaces, when sizes is set (default:empty list)");
+		printf("\t%s%s%s\n", "[sizetimetile=<int>] ", tabs, "specifies size for time tile (default:0)");
 
 		printf("options\n");
 		printf("\t%s%s%s\n", "--isl-schedule-on         ", tabs, "use isl schedule map for loop normalization");

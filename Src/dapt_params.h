@@ -16,8 +16,8 @@ extern "C" {
 
 typedef struct dapt_params{
 	int size;
+	int sizeTimeTile;
 	int sizesDim;
-	int sizesDimIndex;
 	int *sizes;
 	int method;
 	char *filename;

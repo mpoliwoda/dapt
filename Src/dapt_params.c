@@ -12,7 +12,7 @@ void read_dapt_params(dapt_params *daptParams, int argc, char *argv[]){
 	char* paramValue;
 
 	daptParams->size = 16;
-	daptParams->sizesDimIndex = 0;
+	daptParams->sizeTimeTile = 0;
 	daptParams->sizesDim = 0;
 	daptParams->sizes = 0;
 	daptParams->method = 1;
@@ -38,6 +38,13 @@ void read_dapt_params(dapt_params *daptParams, int argc, char *argv[]){
 	if(paramValue){
 		daptParams->size = atoi(paramValue);
 	}
+
+	paramValue = get_param_value("sizetimetile=", argc, argv);
+	if(paramValue){
+		daptParams->sizeTimeTile = atoi(paramValue);
+	}
+
+
 
 	paramValue = get_param_value("sizes=", argc, argv);
 	if(paramValue){
