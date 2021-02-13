@@ -47,17 +47,19 @@ int main(int argc, char *argv[]) {
 		printf("\t%s%s%s\n", "[sizetimetile=<int>] ", tabs, "specifies size for time tile (default:0)");
 
 		printf("options\n");
-		printf("\t%s%s%s\n", "--isl-schedule-on         ", tabs, "use isl schedule map for loop normalization");
-		printf("\t%s%s%s\n", "--isl-schedule-show-code  ", tabs, "show code for isl schedule");
+		printf("\t%s%s%s\n", "--isl-schedule-on          ", tabs, "use isl schedule map for loop normalization");
+		printf("\t%s%s%s\n", "--isl-schedule-show-code   ", tabs, "show code for isl schedule");
 
-		printf("\t%s%s%s\n", "--dapt-scop-split-off     ", tabs, "dont split loops in scop");
-		printf("\t%s%s%s\n", "--dapt-no-tiles           ", tabs, "only loop parse");
-		printf("\t%s%s%s\n", "--dapt-optimize-off       ", tabs, "turns off loop optimization");
-		printf("\t%s%s%s\n", "--dapt-no-order-dims      ", tabs, "turns off order dims from hyperplanes");
+		printf("\t%s%s%s\n", "--dapt-scop-split-off      ", tabs, "dont split loops in scop");
+		printf("\t%s%s%s\n", "--dapt-no-tiles            ", tabs, "only loop parse");
+		printf("\t%s%s%s\n", "--dapt-optimize-off        ", tabs, "turns off loop optimization");
+		printf("\t%s%s%s\n", "--dapt-no-order-dims       ", tabs, "turns off order dims from hyperplanes");
+		printf("\t%s%s%s\n", "--dapt-unit-spacee-only    ", tabs, "find only unit hyperplanes");
 
-		printf("\t%s%s%s\n", "--debug-print-on          ", tabs, "print debug info to stderr");
 
-		printf("\t%s%s%s\n", "--help                    ", tabs, "print this help, then exit");
+		printf("\t%s%s%s\n", "--debug-print-on           ", tabs, "print debug info to stderr");
+
+		printf("\t%s%s%s\n", "--help                     ", tabs, "print this help, then exit");
 
 		return EXIT_SUCCESS;
 	}
@@ -88,10 +90,15 @@ int main(int argc, char *argv[]) {
 		if(daptParams.dapt_no_tiles == isl_bool_false){
 			loop_tile_list *loopTileList =  loop_tile_list_from_loop_scop_list(loopScopList);
 
-			isl_printf_str("\n//dapt code:\n%s", codegen_macros_to_str(loopTileList->wafefrontTileSchedule, petScop));
+			if(daptParams.dapt_no_tiles == isl_bool_false){
+				isl_printf_str("\n//dapt code:\n%s", codegen_macros_to_str(loopTileList->wafefrontTileSchedule, petScop));
 
-			for(int i=0; i<loopTileList->count; i++){
-				isl_printf_str("%s", codegen_wavefront_to_str(loopTileList->loopsTile[i]->wafefrontTileSchedule, petScop, loopTileList->loopsTile[i]->iterators, isl_bool_true));
+				for(int i=0; i<loopTileList->count; i++){
+					isl_printf_str("%s", codegen_wavefront_to_str(loopTileList->loopsTile[i]->wafefrontTileSchedule, petScop, loopTileList->loopsTile[i]->iterators, isl_bool_true));
+				}
+			}
+			else{
+				isl_printf_str("\n//dapt code:\n%s","//Error: see debug info");
 			}
 
 			loopTileList = loop_tile_list_free(loopTileList);

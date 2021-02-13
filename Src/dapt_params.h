@@ -29,6 +29,7 @@ typedef struct dapt_params{
 	isl_bool dapt_no_tiles;
 	isl_bool dapt_optimize_off;
 	isl_bool dapt_no_order_dims;
+	isl_bool dapt_unit_spacee_only;
 } dapt_params;
 
 void read_dapt_params(dapt_params *daptParams, int argc, char *argv[]);

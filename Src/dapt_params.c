@@ -24,6 +24,7 @@ void read_dapt_params(dapt_params *daptParams, int argc, char *argv[]){
 	daptParams->dapt_no_tiles = isl_bool_false;
 	daptParams->dapt_optimize_off = isl_bool_false;
 	daptParams->dapt_no_order_dims = isl_bool_false;
+	daptParams->dapt_unit_spacee_only = isl_bool_false;
 
 	if(is_param_set("--debug-print-on", argc, argv)){
 		daptParams->debugPrintOn = isl_bool_true;
@@ -85,5 +86,9 @@ void read_dapt_params(dapt_params *daptParams, int argc, char *argv[]){
 	}
 	if(is_param_set("--dapt-no-order-dims", argc, argv)){
 		daptParams->dapt_no_order_dims = isl_bool_true;
+	}
+
+	if(is_param_set("--dapt-unit-spacee-only", argc, argv)){
+		daptParams->dapt_unit_spacee_only = isl_bool_true;
 	}
 }
