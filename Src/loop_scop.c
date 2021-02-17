@@ -122,6 +122,41 @@ __isl_give id_name* loop_scop_get_id_names(__isl_keep loop_scop *loopScop, const
 	return retList;
 }
 
+void loop_scop_check_schedule_respects_deps( __isl_keep loop_scop *loopScop, __isl_keep isl_union_map *schedule){
+
+	isl_union_map *scheduleBefore = isl_union_map_lex_lt_union_map(isl_union_map_copy(schedule),isl_union_map_copy(schedule));
+
+	isl_debug_printf("\n#%s\n", "######################################################################");
+
+	isl_debug_printf("\n#%s -> ", "Does global schedule respects oryginal loop RaW deps?");
+	if(isl_union_map_is_subset(loopScop->dep_raw, scheduleBefore) == isl_bool_true){
+		isl_debug_printf("%s\n", "True");
+	}
+	else{
+		isl_debug_printf("%s\n", "False");
+		loopScop->daptParams->dapt_respects_deps = isl_bool_false;
+	}
+	isl_debug_printf("\n#%s -> ", "Does global schedule respects oryginal loop WaW deps?");
+	if(isl_union_map_is_subset(loopScop->dep_waw, scheduleBefore) == isl_bool_true){
+		isl_debug_printf("%s\n", "True");
+	}
+	else{
+		isl_debug_printf("%s\n", "False");
+		loopScop->daptParams->dapt_respects_deps = isl_bool_false;
+	}
+	isl_debug_printf("\n#%s -> ", "Does global schedule respects oryginal loop WaR deps?");
+	if(isl_union_map_is_subset(loopScop->dep_war, scheduleBefore) == isl_bool_true){
+		isl_debug_printf("%s\n", "True");
+	}
+	else{
+		isl_debug_printf("%s\n", "False");
+		loopScop->daptParams->dapt_respects_deps = isl_bool_false;
+	}
+	isl_debug_printf("\n#%s\n", "######################################################################");
+
+	isl_union_map_free(scheduleBefore);
+}
+
 void loop_scop_from_pet_debug_printf(__isl_take loop_scop *loopScop){
 	if(!loopScop) return;
 	isl_debug_printf("\n#%s\n", "######################################################################");

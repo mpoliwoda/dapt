@@ -56,6 +56,7 @@ __isl_give loop_scop* loop_scop_extract_from_pet_scop(__isl_keep pet_scop *petSc
 __isl_give loop_scop* loop_scop_from_schedule_mapper_info(__isl_keep loop_scop *orygScop, __isl_keep schedule_mapper_info *scheduleMapperInfo);
 __isl_null loop_scop* loop_scop_loop_scop_free(__isl_take loop_scop *loopScop);
 __isl_give id_name* loop_scop_get_id_names(__isl_keep loop_scop *loopScop, const char *id, int count);
+void loop_scop_check_schedule_respects_deps( __isl_keep loop_scop *loopScop, __isl_keep isl_union_map *schedule);
 
 void loop_scop_from_pet_debug_printf(__isl_take loop_scop *loopScop);
 void loop_scop_norm_debug_printf(__isl_take loop_scop *loopScop);

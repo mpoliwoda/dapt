@@ -73,7 +73,6 @@ static void loop_tile_create_approximated_relations_for_x_set(int value, int pos
 __isl_give loop_tile_list* loop_tile_list_from_loop_scop_list(loop_scop_list *loopScopList){
 	loop_scop *loopScop = loopScopList->loopScops[0]->orygScop;
 	loop_tile_list *loopTileList = malloc(sizeof(loop_tile_list));
-	isl_union_map *wafefrontTileScheduleBefore = 0;
 
 	loopTileList->count = loopScopList->count;
 	loopTileList->loopsTile = malloc(loopTileList->count*sizeof(loop_tile_info));
@@ -94,37 +93,7 @@ __isl_give loop_tile_list* loop_tile_list_from_loop_scop_list(loop_scop_list *lo
 	isl_debug_printf_union_map("\n#global schedule:\n%s\n", loopTileList->wafefrontTileSchedule);
 	isl_debug_printf("\n#%s\n", "######################################################################");
 
-	isl_debug_printf("\n#%s\n", "######################################################################");
-
-	wafefrontTileScheduleBefore = isl_union_map_lex_lt_union_map(isl_union_map_copy(loopTileList->wafefrontTileSchedule),isl_union_map_copy(loopTileList->wafefrontTileSchedule));
-
-	isl_debug_printf("\n#%s -> ", "Does global schedule respects oryginal loop RaW deps?");
-	if(isl_union_map_is_subset(loopScop->dep_raw, wafefrontTileScheduleBefore) == isl_bool_true){
-		isl_debug_printf("%s\n", "True");
-	}
-	else{
-		isl_debug_printf("%s\n", "False");
-		loopScop->daptParams->dapt_no_tiles = isl_bool_error;
-	}
-	isl_debug_printf("\n#%s -> ", "Does global schedule respects oryginal loop WaW deps?");
-	if(isl_union_map_is_subset(loopScop->dep_waw, wafefrontTileScheduleBefore) == isl_bool_true){
-		isl_debug_printf("%s\n", "True");
-	}
-	else{
-		isl_debug_printf("%s\n", "False");
-		loopScop->daptParams->dapt_no_tiles = isl_bool_error;
-	}
-	isl_debug_printf("\n#%s -> ", "Does global schedule respects oryginal loop WaR deps?");
-	if(isl_union_map_is_subset(loopScop->dep_war, wafefrontTileScheduleBefore) == isl_bool_true){
-		isl_debug_printf("%s\n", "True");
-	}
-	else{
-		isl_debug_printf("%s\n", "False");
-		loopScop->daptParams->dapt_no_tiles = isl_bool_error;
-	}
-	isl_debug_printf("\n#%s\n", "######################################################################");
-
-	isl_union_map_free(wafefrontTileScheduleBefore);
+	loop_scop_check_schedule_respects_deps(loopScop, loopTileList->wafefrontTileSchedule);
 
 	return loopTileList;
 }

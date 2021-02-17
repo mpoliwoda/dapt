@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
 		if(daptParams.dapt_no_tiles == isl_bool_false){
 			loop_tile_list *loopTileList =  loop_tile_list_from_loop_scop_list(loopScopList);
 
-			if(daptParams.dapt_no_tiles == isl_bool_false){
+			if(daptParams.dapt_respects_deps == isl_bool_true){
 				isl_printf_str("\n//dapt code:\n%s", codegen_macros_to_str(loopTileList->wafefrontTileSchedule, petScop));
 
 				for(int i=0; i<loopTileList->count; i++){
