@@ -17,6 +17,7 @@ void read_dapt_params(dapt_params *daptParams, int argc, char *argv[]){
 	daptParams->sizes = 0;
 	daptParams->method = 1;
 	daptParams->filename = 0;
+	daptParams->mapfile = 0;
 	sprintf(daptParams->iteratortype, "int");
 	daptParams->debugPrintOn = isl_bool_false;
 	daptParams->help = isl_bool_false;
@@ -37,6 +38,12 @@ void read_dapt_params(dapt_params *daptParams, int argc, char *argv[]){
 	}
 	daptParams->filename = get_param_value("filename=", argc, argv);
 	if(!daptParams->filename) daptParams->help = isl_bool_true;
+
+	paramValue = get_param_value("mapfile=", argc, argv);
+	if(paramValue){
+		daptParams->mapfile = paramValue;
+	}
+
 
 	paramValue = get_param_value("iteratortype=", argc, argv);
 	if(paramValue){

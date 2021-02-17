@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
 
 		printf("parameters\n");
 		printf("\t%s%s%s\n", "filename=<path>      ", tabs, "file with loop to parse");
+		printf("\t%s%s%s\n", "mapfile=<path>       ", tabs, "file with schedule map");
 		printf("\t%s%s%s\n", "method=<int>         ", tabs, "method for tiles build");
 		printf("\t%s%s%s\n", "                     ", tabs, "1 - parallel synchronization free (lexmax) then wafefront");
 		printf("\t%s%s%s\n", "                     ", tabs, "2 - wafefront");
@@ -45,7 +46,7 @@ int main(int argc, char *argv[]) {
 		printf("\t%s%s%s\n", "[sizes=<int>]        ", tabs, "number of spaces with specified size (default:0)");
 		printf("\t%s%s%s\n", "[size<int>=<int>]    ", tabs, "specifies size list for spaces, when sizes is set (default:empty list)");
 		printf("\t%s%s%s\n", "[sizetimetile=<int>] ", tabs, "specifies size for time tile (default:0)");
-		printf("\t%s%s%s\n", "[iteratortype=<str>] ", tabs, "specifies iterator type (default:int)");
+		printf("\t%s%s%s\n", "[iteratortype=<typename>] ", tabs, "specifies iterator type (default:int)");
 
 		printf("options\n");
 		printf("\t%s%s%s\n", "--isl-schedule-on          ", tabs, "use isl schedule map for loop normalization");
@@ -75,39 +76,68 @@ int main(int argc, char *argv[]) {
 
 	petScop = pet_scop_extract_from_C_source(ctx, daptParams.filename , NULL);
 	if(petScop != 0){
-		loop_scop *loopScop = loop_scop_extract_from_pet_scop(petScop, &daptParams);
+		if(daptParams.mapfile == 0){
+			loop_scop *loopScop = loop_scop_extract_from_pet_scop(petScop, &daptParams);
 
-		if(daptParams.isl_schedule_show_code == isl_bool_true){
-			isl_union_map *schedule = isl_union_map_intersect_domain(isl_union_map_copy(loopScop->loopIslMap), isl_union_set_copy(loopScop->loopDomain));
-			isl_debug_printf("\n#%s\n", "######################################################################");
-			isl_debug_printf("\n#%s\n", "isl schedule code:");
-			isl_debug_printf_str("%s", codegen_wavefront_to_str(schedule, petScop, 0, isl_bool_false));
-			isl_debug_printf("\n#%s\n", "######################################################################");
+			if(daptParams.isl_schedule_show_code == isl_bool_true){
+				isl_union_map *schedule = isl_union_map_intersect_domain(isl_union_map_copy(loopScop->loopIslMap), isl_union_set_copy(loopScop->loopDomain));
+				isl_debug_printf("\n#%s\n", "######################################################################");
+				isl_debug_printf("\n#%s\n", "isl schedule code:");
+				isl_debug_printf_str("%s", codegen_wavefront_to_str(schedule, petScop, 0, isl_bool_false));
+				isl_debug_printf("\n#%s\n", "######################################################################");
 
-			isl_union_map_free(schedule);
+				isl_union_map_free(schedule);
+			}
+
+			loop_scop_list *loopScopList = normalize_calc_scop(loopScop);
+
+			if(daptParams.dapt_no_tiles == isl_bool_false){
+				loop_tile_list *loopTileList =  loop_tile_list_from_loop_scop_list(loopScopList);
+
+				if(daptParams.dapt_respects_deps == isl_bool_true){
+					isl_printf_str("\n//dapt code:\n%s", codegen_macros_to_str(loopTileList->wafefrontTileSchedule, petScop));
+
+					for(int i=0; i<loopTileList->count; i++){
+						isl_printf_str("%s", codegen_wavefront_to_str(loopTileList->loopsTile[i]->wafefrontTileSchedule, petScop, loopTileList->loopsTile[i]->iterators, isl_bool_true));
+					}
+				}
+				else{
+					isl_printf_str("\n//dapt code:\n%s","//Error: see debug info");
+				}
+
+				loopTileList = loop_tile_list_free(loopTileList);
+			}
+
+			loopScopList = loop_scop_list_free(loopScopList);
+			loopScop = loop_scop_loop_scop_free(loopScop);
 		}
+		else{
+			loop_scop *loopScop = loop_scop_extract_from_pet_scop(petScop, &daptParams);
+			FILE *mapFile = fopen(daptParams.mapfile,"rt");
+			isl_union_map *schedule = isl_union_map_read_from_file(ctx, mapFile);
+			fclose(mapFile);
 
-		loop_scop_list *loopScopList = normalize_calc_scop(loopScop);
+			loop_scop_from_pet_debug_printf(loopScop);
 
-		if(daptParams.dapt_no_tiles == isl_bool_false){
-			loop_tile_list *loopTileList =  loop_tile_list_from_loop_scop_list(loopScopList);
+			schedule = isl_union_map_intersect_domain(schedule, isl_union_set_copy(loopScop->loopDomain));
+
+			isl_debug_printf("\n#%s\n", "######################################################################");
+			isl_debug_printf_union_map("\n#shcedule code: %s\n", schedule);
+			isl_debug_printf("\n#%s\n", "######################################################################");
+
+			loop_scop_check_schedule_respects_deps(loopScop, schedule);
 
 			if(daptParams.dapt_respects_deps == isl_bool_true){
-				isl_printf_str("\n//dapt code:\n%s", codegen_macros_to_str(loopTileList->wafefrontTileSchedule, petScop));
-
-				for(int i=0; i<loopTileList->count; i++){
-					isl_printf_str("%s", codegen_wavefront_to_str(loopTileList->loopsTile[i]->wafefrontTileSchedule, petScop, loopTileList->loopsTile[i]->iterators, isl_bool_true));
-				}
+				isl_printf_str("\n//dapt code:\n%s", codegen_macros_to_str(schedule, petScop));
+				isl_printf_str("%s", codegen_wavefront_to_str(schedule, petScop, 0, isl_bool_true));
 			}
 			else{
 				isl_printf_str("\n//dapt code:\n%s","//Error: see debug info");
 			}
 
-			loopTileList = loop_tile_list_free(loopTileList);
+			loopScop = loop_scop_loop_scop_free(loopScop);
+			schedule = isl_union_map_free(schedule);
 		}
-
-		loopScopList = loop_scop_list_free(loopScopList);
-		loopScop = loop_scop_loop_scop_free(loopScop);
 	}
 
 	pet_scop_free(petScop);
