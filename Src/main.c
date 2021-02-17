@@ -45,6 +45,7 @@ int main(int argc, char *argv[]) {
 		printf("\t%s%s%s\n", "[sizes=<int>]        ", tabs, "number of spaces with specified size (default:0)");
 		printf("\t%s%s%s\n", "[size<int>=<int>]    ", tabs, "specifies size list for spaces, when sizes is set (default:empty list)");
 		printf("\t%s%s%s\n", "[sizetimetile=<int>] ", tabs, "specifies size for time tile (default:0)");
+		printf("\t%s%s%s\n", "[iteratortype=<str>] ", tabs, "specifies iterator type (default:int)");
 
 		printf("options\n");
 		printf("\t%s%s%s\n", "--isl-schedule-on          ", tabs, "use isl schedule map for loop normalization");
@@ -70,6 +71,7 @@ int main(int argc, char *argv[]) {
 
 	ctx = isl_ctx_alloc_with_pet_options();
 	pet_options_set_signed_overflow(ctx, PET_OVERFLOW_IGNORE);
+	isl_options_set_ast_iterator_type(ctx, daptParams.iteratortype);
 
 	petScop = pet_scop_extract_from_C_source(ctx, daptParams.filename , NULL);
 	if(petScop != 0){

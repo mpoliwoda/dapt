@@ -25,6 +25,7 @@ void read_dapt_params(dapt_params *daptParams, int argc, char *argv[]){
 	daptParams->dapt_optimize_off = isl_bool_false;
 	daptParams->dapt_no_order_dims = isl_bool_false;
 	daptParams->dapt_unit_spacee_only = isl_bool_false;
+	sprintf(daptParams->iteratortype, "int");
 
 	if(is_param_set("--debug-print-on", argc, argv)){
 		daptParams->debugPrintOn = isl_bool_true;
@@ -34,6 +35,11 @@ void read_dapt_params(dapt_params *daptParams, int argc, char *argv[]){
 	}
 	daptParams->filename = get_param_value("filename=", argc, argv);
 	if(!daptParams->filename) daptParams->help = isl_bool_true;
+
+	paramValue = get_param_value("iteratortype=", argc, argv);
+	if(paramValue){
+		sprintf(daptParams->iteratortype, "%s", paramValue);
+	}
 
 	paramValue = get_param_value("size=", argc, argv);
 	if(paramValue){

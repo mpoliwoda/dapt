@@ -21,6 +21,7 @@ typedef struct dapt_params{
 	int *sizes;
 	int method;
 	char *filename;
+	char iteratortype[32];
 	isl_bool debugPrintOn;
 	isl_bool help;
 	isl_bool isl_schedule_on;
