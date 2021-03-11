@@ -1,0 +1,75 @@
+
+//dapt code:
+#define min(x,y)    ((x) < (y) ? (x) : (y))
+#define floord(n,d) (((n)<0) ? -((-(n)+(d)-1)/(d)) : (n)/(d))
+
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_NI - 1, 16); ph0 += 1) {
+  for (int h1 = 0; h1 <= floord(_PB_NJ - 1, 16); h1 += 1) {
+    for (int h2 = 0; h2 <= floord(_PB_NK - 1, 16); h2 += 1) {
+      for (int i1 = 16 * ph0; i1 <= min(_PB_NI - 1, 16 * ph0 + 15); i1 += 1) {
+        for (int i2 = 16 * h1; i2 <= min(_PB_NJ - 1, 16 * h1 + 15); i2 += 1) {
+          if (h2 == 0) {
+            E[i1][i2] = SCALAR_VAL(0.0);
+          }
+          for (int i4 = 16 * h2; i4 <= min(_PB_NK - 1, 16 * h2 + 15); i4 += 1) {
+            E[i1][i2] += (A[i1][i4] * B[i4][i2]);
+          }
+        }
+      }
+    }
+    if (_PB_NK <= 0) {
+      for (int i1 = 16 * ph0; i1 <= min(_PB_NI - 1, 16 * ph0 + 15); i1 += 1) {
+        for (int i2 = 16 * h1; i2 <= min(_PB_NJ - 1, 16 * h1 + 15); i2 += 1) {
+          E[i1][i2] = SCALAR_VAL(0.0);
+        }
+      }
+    }
+  }
+}
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_NJ - 1, 16); ph0 += 1) {
+  for (int h1 = 0; h1 <= floord(_PB_NL - 1, 16); h1 += 1) {
+    for (int h2 = 0; h2 <= floord(_PB_NM - 1, 16); h2 += 1) {
+      for (int i1 = 16 * ph0; i1 <= min(_PB_NJ - 1, 16 * ph0 + 15); i1 += 1) {
+        for (int i2 = 16 * h1; i2 <= min(_PB_NL - 1, 16 * h1 + 15); i2 += 1) {
+          if (h2 == 0) {
+            F[i1][i2] = SCALAR_VAL(0.0);
+          }
+          for (int i4 = 16 * h2; i4 <= min(_PB_NM - 1, 16 * h2 + 15); i4 += 1) {
+            F[i1][i2] += (C[i1][i4] * D[i4][i2]);
+          }
+        }
+      }
+    }
+    if (_PB_NM <= 0) {
+      for (int i1 = 16 * ph0; i1 <= min(_PB_NJ - 1, 16 * ph0 + 15); i1 += 1) {
+        for (int i2 = 16 * h1; i2 <= min(_PB_NL - 1, 16 * h1 + 15); i2 += 1) {
+          F[i1][i2] = SCALAR_VAL(0.0);
+        }
+      }
+    }
+  }
+}
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_NI - 1, 16); ph0 += 1) {
+  for (int h1 = 0; h1 <= floord(_PB_NL - 1, 16); h1 += 1) {
+    for (int i1 = 16 * ph0; i1 <= min(_PB_NI - 1, 16 * ph0 + 15); i1 += 1) {
+      for (int i2 = 16 * h1; i2 <= min(_PB_NL - 1, 16 * h1 + 15); i2 += 1) {
+        G[i1][i2] = SCALAR_VAL(0.0);
+        for (int i4 = 0; i4 <= min(15, _PB_NJ - 1); i4 += 1) {
+          G[i1][i2] += (E[i1][i4] * F[i4][i2]);
+        }
+      }
+    }
+    for (int h2 = 1; h2 <= floord(_PB_NJ - 1, 16); h2 += 1) {
+      for (int i1 = 16 * ph0; i1 <= min(_PB_NI - 1, 16 * ph0 + 15); i1 += 1) {
+        for (int i2 = 16 * h1; i2 <= min(_PB_NL - 1, 16 * h1 + 15); i2 += 1) {
+          for (int i4 = 16 * h2; i4 <= min(_PB_NJ - 1, 16 * h2 + 15); i4 += 1) {
+            G[i1][i2] += (E[i1][i4] * F[i4][i2]);
+          }
+        }
+      }
+    }
+  }
+}

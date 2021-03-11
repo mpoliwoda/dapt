@@ -1,0 +1,37 @@
+
+//dapt code:
+#define min(x,y)    ((x) < (y) ? (x) : (y))
+#define max(x,y)    ((x) > (y) ? (x) : (y))
+#define floord(n,d) (((n)<0) ? -((-(n)+(d)-1)/(d)) : (n)/(d))
+
+if (_PB_N >= 3) {
+  for (int w0 = 0; w0 <= floord(5 * _PB_TSTEPS + 2 * _PB_N - 7, 16); w0 += 1) {
+    #pragma omp parallel for
+    for (int h0 = max(max(0, w0 - (2 * _PB_TSTEPS + _PB_N + 5) / 8 + 1), floord(-_PB_N + 8 * w0 + 10, 40)); h0 <= min(floord(_PB_TSTEPS - 1, 16), w0 / 5); h0 += 1) {
+      for (int h1 = max(max(max(2 * h0, w0 - h0 - (2 * _PB_TSTEPS + _PB_N + 13) / 16 + 1), w0 - 3 * h0 - (_PB_N + 13) / 16 - 1), -h0 + floord(-_PB_N + 16 * w0 + 16 * h0 - 13, 32) + 1); h1 <= min(min(min(w0 - 3 * h0, 2 * h0 + (_PB_N - 3) / 16 + 2), (2 * _PB_TSTEPS + _PB_N - 3) / 16), -h0 + (_PB_N + 16 * w0 + 16 * h0 + 12) / 32); h1 += 1) {
+        for (int i0 = max(max(16 * h0, -_PB_N + 8 * h1 + floord(_PB_N, 2) + 1), -_PB_N + 8 * w0 - 8 * h0 - 8 * h1 + floord(_PB_N, 2) + 1); i0 <= min(min(min(_PB_TSTEPS - 1, 16 * h0 + 15), 8 * h1 + 6), 8 * w0 - 8 * h0 - 8 * h1 + 6); i0 += 1) {
+          for (int i2 = max(1, 16 * h1 - 2 * i0); i2 <= min(_PB_N - 2, 16 * h1 - 2 * i0 + 15); i2 += 1) {
+            for (int i3 = max(1, 16 * w0 - 16 * h0 - 16 * h1 - 2 * i0); i3 <= min(_PB_N - 2, 16 * w0 - 16 * h0 - 16 * h1 - 2 * i0 + 15); i3 += 1) {
+              B[i2][i3] = (SCALAR_VAL(0.2) * ((((A[i2][i3] + A[i2][i3 - 1]) + A[i2][i3 + 1]) + A[i2 + 1][i3]) + A[i2 - 1][i3]));
+            }
+          }
+          for (int i2 = max(1, 16 * h1 - 2 * i0 - 1); i2 <= min(_PB_N - 2, 16 * h1 - 2 * i0 + 14); i2 += 1) {
+            for (int i3 = max(1, 16 * w0 - 16 * h0 - 16 * h1 - 2 * i0 - 1); i3 <= min(_PB_N - 2, 16 * w0 - 16 * h0 - 16 * h1 - 2 * i0 + 14); i3 += 1) {
+              A[i2][i3] = (SCALAR_VAL(0.2) * ((((B[i2][i3] + B[i2][i3 - 1]) + B[i2][i3 + 1]) + B[i2 + 1][i3]) + B[i2 - 1][i3]));
+            }
+          }
+        }
+        if (3 * h0 + h1 + 1 >= w0 && h0 + 2 * h1 >= w0 + 1 && _PB_TSTEPS + 8 * h0 + 8 * h1 >= 8 * w0 + 8) {
+          for (int i2 = -16 * w0 + 16 * h0 + 32 * h1 - 14; i2 <= min(_PB_N - 2, -16 * w0 + 16 * h0 + 32 * h1 + 1); i2 += 1) {
+            B[i2][1] = (SCALAR_VAL(0.2) * ((((A[i2][1] + A[i2][0]) + A[i2][2]) + A[i2 + 1][1]) + A[i2 - 1][1]));
+          }
+        }
+        if (2 * h0 + 1 >= h1 && _PB_TSTEPS >= 8 * h1 + 8) {
+          for (int i3 = max(1, 16 * w0 - 16 * h0 - 32 * h1 - 14); i3 <= min(_PB_N - 2, 16 * w0 - 16 * h0 - 32 * h1 + 1); i3 += 1) {
+            B[1][i3] = (SCALAR_VAL(0.2) * ((((A[1][i3] + A[1][i3 - 1]) + A[1][i3 + 1]) + A[2][i3]) + A[0][i3]));
+          }
+        }
+      }
+    }
+  }
+}

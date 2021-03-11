@@ -1,0 +1,44 @@
+
+//dapt code:
+#define min(x,y)    ((x) < (y) ? (x) : (y))
+#define max(x,y)    ((x) > (y) ? (x) : (y))
+#define floord(n,d) (((n)<0) ? -((-(n)+(d)-1)/(d)) : (n)/(d))
+
+for (int i0 = 1; i0 <= _PB_TSTEPS; i0 += 1) {
+  #pragma omp parallel for
+  for (int ph0 = 0; ph0 <= floord(_PB_N - 2, 16); ph0 += 1) {
+    for (int i2 = max(1, 16 * ph0); i2 <= min(_PB_N - 2, 16 * ph0 + 15); i2 += 1) {
+      {
+        v[0][i2] = SCALAR_VAL(1.0);
+        p[i2][0] = SCALAR_VAL(0.0);
+        q[i2][0] = v[0][i2];
+        for (int i4 = 1; i4 < _PB_N - 1; i4 += 1) {
+          p[i2][i4] = ((-c) / (((a) * p[i2][i4 - 1]) + (b)));
+          q[i2][i4] = ((((((-d) * u[i4][i2 - 1]) + ((SCALAR_VAL(1.0) + (SCALAR_VAL(2.0) * (d))) * u[i4][i2])) - ((f) * u[i4][i2 + 1])) - ((a) * q[i2][i4 - 1])) / (((a) * p[i2][i4 - 1]) + (b)));
+        }
+        v[_PB_N - 1][i2] = SCALAR_VAL(1.0);
+      }
+      for (int i4 = -_PB_N + 2; i4 < 0; i4 += 1) {
+        v[-i4][i2] = ((p[i2][-i4] * v[-i4 + 1][i2]) + q[i2][-i4]);
+      }
+    }
+  }
+  #pragma omp parallel for
+  for (int ph0 = 0; ph0 <= floord(_PB_N - 2, 16); ph0 += 1) {
+    for (int i2 = max(1, 16 * ph0); i2 <= min(_PB_N - 2, 16 * ph0 + 15); i2 += 1) {
+      {
+        u[i2][0] = SCALAR_VAL(1.0);
+        p[i2][0] = SCALAR_VAL(0.0);
+        q[i2][0] = u[i2][0];
+        for (int i4 = 1; i4 < _PB_N - 1; i4 += 1) {
+          p[i2][i4] = ((-f) / (((d) * p[i2][i4 - 1]) + (e)));
+          q[i2][i4] = ((((((-a) * v[i2 - 1][i4]) + ((SCALAR_VAL(1.0) + (SCALAR_VAL(2.0) * (a))) * v[i2][i4])) - ((c) * v[i2 + 1][i4])) - ((d) * q[i2][i4 - 1])) / (((d) * p[i2][i4 - 1]) + (e)));
+        }
+        u[i2][_PB_N - 1] = SCALAR_VAL(1.0);
+      }
+      for (int i4 = -_PB_N + 2; i4 < 0; i4 += 1) {
+        u[i2][-i4] = ((p[i2][-i4] * u[i2][-i4 + 1]) + q[i2][-i4]);
+      }
+    }
+  }
+}

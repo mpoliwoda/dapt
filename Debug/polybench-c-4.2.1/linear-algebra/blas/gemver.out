@@ -1,0 +1,41 @@
+
+//dapt code:
+#define min(x,y)    ((x) < (y) ? (x) : (y))
+#define floord(n,d) (((n)<0) ? -((-(n)+(d)-1)/(d)) : (n)/(d))
+
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_N - 1, 16); ph0 += 1) {
+  for (int h1 = 0; h1 <= (_PB_N - 1) / 16; h1 += 1) {
+    for (int i1 = 16 * ph0; i1 <= min(_PB_N - 1, 16 * ph0 + 15); i1 += 1) {
+      for (int i2 = 16 * h1; i2 <= min(_PB_N - 1, 16 * h1 + 15); i2 += 1) {
+        A[i1][i2] = ((A[i1][i2] + (u1[i1] * v1[i2])) + (u2[i1] * v2[i2]));
+      }
+    }
+  }
+}
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_N - 1, 16); ph0 += 1) {
+  for (int h1 = 0; h1 <= (_PB_N - 1) / 16; h1 += 1) {
+    for (int i1 = 16 * ph0; i1 <= min(_PB_N - 1, 16 * ph0 + 15); i1 += 1) {
+      for (int i2 = 16 * h1; i2 <= min(_PB_N - 1, 16 * h1 + 15); i2 += 1) {
+        x[i1] = (x[i1] + (((beta) * A[i2][i1]) * y[i2]));
+      }
+    }
+  }
+}
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_N - 1, 16); ph0 += 1) {
+  for (int i1 = 16 * ph0; i1 <= min(_PB_N - 1, 16 * ph0 + 15); i1 += 1) {
+    x[i1] = (x[i1] + z[i1]);
+  }
+}
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_N - 1, 16); ph0 += 1) {
+  for (int h1 = 0; h1 <= (_PB_N - 1) / 16; h1 += 1) {
+    for (int i1 = 16 * ph0; i1 <= min(_PB_N - 1, 16 * ph0 + 15); i1 += 1) {
+      for (int i2 = 16 * h1; i2 <= min(_PB_N - 1, 16 * h1 + 15); i2 += 1) {
+        w[i1] = (w[i1] + (((alpha) * A[i1][i2]) * x[i2]));
+      }
+    }
+  }
+}

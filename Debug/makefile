@@ -23,19 +23,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: dapt.exe
+all: dapt
 
 # Tool invocations
-dapt.exe: $(OBJS) $(USER_OBJS)
+dapt: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
-	@echo 'Invoking: Cygwin C Linker'
-	g++ -L/usr/local/lib -L/lib -o "dapt.exe" $(OBJS) $(USER_OBJS) $(LIBS)
+	@echo 'Invoking: GCC C Linker'
+	g++ -L/usr/local/lib -o "dapt" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) dapt.exe
+	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) dapt
 	-@echo ' '
 
 .PHONY: all clean dependents

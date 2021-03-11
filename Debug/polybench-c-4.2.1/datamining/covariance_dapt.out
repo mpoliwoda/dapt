@@ -1,0 +1,45 @@
+
+//dapt code:
+#define min(x,y)    ((x) < (y) ? (x) : (y))
+#define max(x,y)    ((x) > (y) ? (x) : (y))
+#define floord(n,d) (((n)<0) ? -((-(n)+(d)-1)/(d)) : (n)/(d))
+
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_M - 1, 16); ph0 += 1) {
+  for (int i1 = 16 * ph0; i1 <= min(_PB_M - 1, 16 * ph0 + 15); i1 += 1) {
+    {
+      mean[i1] = SCALAR_VAL(0.0);
+      for (int i3 = 0; i3 < _PB_N; i3 += 1) {
+        mean[i1] += data[i3][i1];
+      }
+    }
+    mean[i1] /= (float_n);
+  }
+}
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_N - 1, 16); ph0 += 1) {
+  for (int h1 = 0; h1 <= floord(_PB_M - 1, 16); h1 += 1) {
+    for (int i1 = 16 * ph0; i1 <= min(_PB_N - 1, 16 * ph0 + 15); i1 += 1) {
+      for (int i3 = 16 * h1; i3 <= min(_PB_M - 1, 16 * h1 + 15); i3 += 1) {
+        data[i1][i3] -= mean[i3];
+      }
+    }
+  }
+}
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_M - 1, 16); ph0 += 1) {
+  for (int h1 = ph0; h1 <= (_PB_M - 1) / 16; h1 += 1) {
+    for (int i1 = 16 * ph0; i1 <= min(_PB_M - 1, 16 * ph0 + 15); i1 += 1) {
+      for (int i3 = max(16 * h1, i1); i3 <= min(_PB_M - 1, 16 * h1 + 15); i3 += 1) {
+        {
+          cov[i1][i3] = SCALAR_VAL(0.0);
+          for (int i5 = 0; i5 < _PB_N; i5 += 1) {
+            cov[i1][i3] += (data[i5][i1] * data[i5][i3]);
+          }
+          cov[i1][i3] /= ((float_n) - SCALAR_VAL(1.0));
+        }
+        cov[i3][i1] = cov[i1][i3];
+      }
+    }
+  }
+}

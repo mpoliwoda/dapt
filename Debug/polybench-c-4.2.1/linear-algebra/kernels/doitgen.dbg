@@ -1,0 +1,789 @@
+
+#######################################################################
+
+#oryginal loop:
+
+#schedule:
+{ domain: "[_PB_NR, _PB_NQ, _PB_NP] -> { S_0[r, q, p] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP; S_1[r, q, p, s] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP; S_2[r, q, p] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP }", child: { schedule: "[_PB_NR, _PB_NQ, _PB_NP] -> L_0[{ S_0[r, q, p] -> [(r)]; S_1[r, q, p, s] -> [(r)]; S_2[r, q, p] -> [(r)] }]", child: { schedule: "[_PB_NR, _PB_NQ, _PB_NP] -> L_1[{ S_0[r, q, p] -> [(q)]; S_1[r, q, p, s] -> [(q)]; S_2[r, q, p] -> [(q)] }]", child: { sequence: [ { filter: "[_PB_NR, _PB_NQ, _PB_NP] -> { S_0[r, q, p]; S_1[r, q, p, s] }", child: { schedule: "[_PB_NR, _PB_NQ, _PB_NP] -> L_2[{ S_0[r, q, p] -> [(p)]; S_1[r, q, p, s] -> [(p)] }]", child: { sequence: [ { filter: "[_PB_NR, _PB_NQ, _PB_NP] -> { S_0[r, q, p] }" }, { filter: "[_PB_NR, _PB_NQ, _PB_NP] -> { S_1[r, q, p, s] }", child: { schedule: "[_PB_NR, _PB_NQ, _PB_NP] -> L_3[{ S_1[r, q, p, s] -> [(s)] }]" } } ] } } }, { filter: "[_PB_NR, _PB_NQ, _PB_NP] -> { S_2[r, q, p] }", child: { schedule: "[_PB_NR, _PB_NQ, _PB_NP] -> L_4[{ S_2[r, q, p] -> [(p)] }]" } } ] } } } }
+
+#domain:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_0[r, q, p] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP; S_1[r, q, p, s] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP; S_2[r, q, p] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP }
+
+#schedule map:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_0[r, q, p] -> [r, q, 0, p, 0, 0]; S_1[r, q, p, s] -> [r, q, 0, p, 1, s]; S_2[r, q, p] -> [r, q, 1, p, 0, 0] }
+
+#isl schedule:
+{ domain: "[_PB_NR, _PB_NQ, _PB_NP] -> { S_0[r, q, p] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP; S_1[r, q, p, s] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP; S_2[r, q, p] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP }", child: { schedule: "[_PB_NR, _PB_NQ, _PB_NP] -> [{ S_0[r, q, p] -> [(r)]; S_1[r, q, p, s] -> [(r)]; S_2[r, q, p] -> [(r)] }]", permutable: 1, coincident: [ 1 ], child: { schedule: "[_PB_NR, _PB_NQ, _PB_NP] -> [{ S_0[r, q, p] -> [(q)]; S_1[r, q, p, s] -> [(q)]; S_2[r, q, p] -> [(q)] }]", permutable: 1, coincident: [ 1 ], child: { schedule: "[_PB_NR, _PB_NQ, _PB_NP] -> [{ S_0[r, q, p] -> [(p)]; S_1[r, q, p, s] -> [(p)]; S_2[r, q, p] -> [(_PB_NP)] }, { S_0[r, q, p] -> [(p)]; S_1[r, q, p, s] -> [(p + s)]; S_2[r, q, p] -> [(_PB_NP + p)] }]", permutable: 1, coincident: [ 1, 1 ], child: { set: [ { filter: "[_PB_NR, _PB_NQ, _PB_NP] -> { S_2[r, q, p] }" }, { filter: "[_PB_NR, _PB_NQ, _PB_NP] -> { S_0[r, q, p]; S_1[r, q, p, s] }", child: { sequence: [ { filter: "[_PB_NR, _PB_NQ, _PB_NP] -> { S_0[r, q, p] }" }, { filter: "[_PB_NR, _PB_NQ, _PB_NP] -> { S_1[r, q, p, s] }" } ] } } ] } } } } }
+
+#isl schedule map:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_1[r, q, p, s] -> [r, q, p, p + s, 1, 1]; S_0[r, q, p] -> [r, q, p, p, 1, 0]; S_2[r, q, p] -> [r, q, _PB_NP, _PB_NP + p, 0, 0] }
+
+#writes:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_1[r, q, p, s] -> sum[p] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP; S_0[r, q, p] -> sum[p] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP; S_2[r, q, p] -> A[r, q, p] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP }
+
+#reads:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_1[r, q, p, s] -> sum[p] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP; S_1[r, q, p, s] -> A[r, q, s] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP; S_1[r, q, p, s] -> C4[s, p] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP; S_2[r, q, p] -> sum[p] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP }
+
+#dep_raw:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_0[r, q, p] -> S_1[r', q', p' = p, s] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ and 0 <= s < _PB_NP; S_0[r, q, p] -> S_1[r' = r, q', p' = p, s] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and q <= q' < _PB_NQ and 0 <= s < _PB_NP; S_0[r, q, p] -> S_2[r', q', p' = p] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ; S_0[r, q, p] -> S_2[r' = r, q', p' = p] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and q <= q' < _PB_NQ; S_1[r, q, p, s] -> S_2[r', q', p' = p] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ; S_1[r, q, p, s] -> S_2[r' = r, q', p' = p] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and 0 <= s < _PB_NP and q <= q' < _PB_NQ; S_1[r, q, p, s] -> S_1[r', q', p' = p, s'] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ and 0 <= s' < _PB_NP; S_1[r, q, p, s] -> S_1[r' = r, q', p' = p, s'] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and 0 <= s < _PB_NP and q < q' < _PB_NQ and 0 <= s' < _PB_NP; S_1[r, q, p, s] -> S_1[r' = r, q' = q, p' = p, s'] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and s >= 0 and s < s' < _PB_NP }
+
+#dep_waw:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_0[r, q, p] -> S_1[r', q', p' = p, s] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ and 0 <= s < _PB_NP; S_0[r, q, p] -> S_1[r' = r, q', p' = p, s] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and q <= q' < _PB_NQ and 0 <= s < _PB_NP; S_0[r, q, p] -> S_0[r', q', p' = p] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ; S_0[r, q, p] -> S_0[r' = r, q', p' = p] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and q < q' < _PB_NQ; S_1[r, q, p, s] -> S_1[r', q', p' = p, s'] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ and 0 <= s' < _PB_NP; S_1[r, q, p, s] -> S_1[r' = r, q', p' = p, s'] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and 0 <= s < _PB_NP and q < q' < _PB_NQ and 0 <= s' < _PB_NP; S_1[r, q, p, s] -> S_1[r' = r, q' = q, p' = p, s'] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and s >= 0 and s < s' < _PB_NP; S_1[r, q, p, s] -> S_0[r', q', p' = p] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ; S_1[r, q, p, s] -> S_0[r' = r, q', p' = p] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and 0 <= s < _PB_NP and q < q' < _PB_NQ }
+
+#dep_war:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_2[r, q, p] -> S_1[r', q', p' = p, s] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ and 0 <= s < _PB_NP; S_2[r, q, p] -> S_1[r' = r, q', p' = p, s] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and q < q' < _PB_NQ and 0 <= s < _PB_NP; S_1[r, q, p, s] -> S_2[r' = r, q' = q, p' = s] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP; S_2[r, q, p] -> S_0[r', q', p' = p] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ; S_2[r, q, p] -> S_0[r' = r, q', p' = p] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and q < q' < _PB_NQ; S_1[r, q, p, s] -> S_1[r', q', p' = p, s'] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ and 0 <= s' < _PB_NP; S_1[r, q, p, s] -> S_1[r' = r, q', p' = p, s'] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and 0 <= s < _PB_NP and q < q' < _PB_NQ and 0 <= s' < _PB_NP; S_1[r, q, p, s] -> S_1[r' = r, q' = q, p' = p, s'] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and s >= 0 and s < s' < _PB_NP; S_1[r, q, p, s] -> S_0[r', q', p' = p] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ; S_1[r, q, p, s] -> S_0[r' = r, q', p' = p] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and 0 <= s < _PB_NP and q < q' < _PB_NQ }
+
+#relations:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_1[r, q, p, s] -> S_1[r', q', p' = p, s'] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ and 0 <= s' < _PB_NP; S_1[r, q, p, s] -> S_1[r' = r, q', p' = p, s'] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and 0 <= s < _PB_NP and q < q' < _PB_NQ and 0 <= s' < _PB_NP; S_1[r, q, p, s] -> S_1[r' = r, q' = q, p' = p, s'] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and s >= 0 and s < s' < _PB_NP; S_0[r, q, p] -> S_2[r', q', p' = p] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ; S_0[r, q, p] -> S_2[r' = r, q', p' = p] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and q <= q' < _PB_NQ; S_0[r, q, p] -> S_0[r', q', p' = p] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ; S_0[r, q, p] -> S_0[r' = r, q', p' = p] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and q < q' < _PB_NQ; S_2[r, q, p] -> S_1[r', q', p' = p, s] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ and 0 <= s < _PB_NP; S_2[r, q, p] -> S_1[r' = r, q', p' = p, s] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and q < q' < _PB_NQ and 0 <= s < _PB_NP; S_1[r, q, p, s] -> S_0[r', q', p' = p] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ; S_1[r, q, p, s] -> S_0[r' = r, q', p' = p] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and 0 <= s < _PB_NP and q < q' < _PB_NQ; S_1[r, q, p, s] -> S_2[r', q', p' = p] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ; S_1[r, q, p, s] -> S_2[r' = r, q', p' = p] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and 0 <= s < _PB_NP and q <= q' < _PB_NQ; S_1[r, q, p, s] -> S_2[r' = r, q' = q, p' = s] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP; S_0[r, q, p] -> S_1[r', q', p' = p, s] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ and 0 <= s < _PB_NP; S_0[r, q, p] -> S_1[r' = r, q', p' = p, s] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and q <= q' < _PB_NQ and 0 <= s < _PB_NP; S_2[r, q, p] -> S_0[r', q', p' = p] : r >= 0 and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and r < r' < _PB_NR and 0 <= q' < _PB_NQ; S_2[r, q, p] -> S_0[r' = r, q', p' = p] : 0 <= r < _PB_NR and q >= 0 and 0 <= p < _PB_NP and q < q' < _PB_NQ }
+
+#delta:
+{ [r, q, p = 0, s] : r > 0; [r = 0, q, p = 0, s] : q > 0; [r = 0, q = 0, p = 0, s] : s > 0; [r, q, p = 0] : r > 0; [r = 0, q, p = 0] : q >= 0 }
+
+#######################################################################
+
+#######################################################################
+
+#norm schedule map:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_1[r, q, p, s] -> [r, q, 0, p, 1, s]; S_2[r, q, p] -> [r, q, 1, p, 0, 0]; S_0[r, q, p] -> [r, q, 0, p, 0, 0] }
+
+#######################################################################
+
+#######################################################################
+
+#normalized loop (0):
+
+#mapper:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_1[r, q, p, s] -> S_1[i0 = r, i1 = q, i2 = 0, i3 = p, i4 = 1, i5 = s]; S_2[r, q, p] -> S_2[i0 = r, i1 = q, i2 = 1, i3 = p, i4 = 0, i5 = _PB_NP]; S_0[r, q, p] -> S_0[i0 = r, i1 = q, i2 = 0, i3 = p, i4 = 0, i5 = 0] }
+
+#domain:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP; S_2[i0, i1, i2 = 1, i3, i4 = 0, i5 = _PB_NP] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP }
+
+#schedule map:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> [i0, i1, 0, i3, 1, i5]; S_2[i0, i1, i2 = 1, i3, i4 = 0, i5 = _PB_NP] -> [i0, i1, 1, i3, 0, 0]; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> [i0, i1, 0, i3, 0, 0] }
+
+#writes:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_2[i0, i1, i2 = 1, i3, i4 = 0, i5 = _PB_NP] -> A[i0, i1, i3] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> sum[i3] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> sum[i3] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP }
+
+#reads:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_2[i0, i1, i2 = 1, i3, i4 = 0, i5 = _PB_NP] -> sum[i3] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> A[i0, i1, i5] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> C4[i5, i3] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> sum[i3] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP }
+
+#dep_raw:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_2[i0', i1', i2' = 1, i3' = i3, i4' = 0, i5' = _PB_NP] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_2[i0' = i0, i1', i2' = 1, i3' = i3, i4' = 0, i5' = _PB_NP] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i1 <= i1' < _PB_NQ; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_1[i0', i1', i2' = 0, i3' = i3, i4' = 1, i5'] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_1[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 1, i5'] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i1 < i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_1[i0' = i0, i1' = i1, i2' = 0, i3' = i3, i4' = 1, i5'] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i5 >= 0 and i5 < i5' < _PB_NP; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_2[i0', i1', i2' = 1, i3' = i3, i4' = 0, i5' = _PB_NP] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_2[i0' = i0, i1', i2' = 1, i3' = i3, i4' = 0, i5' = _PB_NP] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and i1 <= i1' < _PB_NQ; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_1[i0', i1', i2' = 0, i3' = i3, i4' = 1, i5'] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_1[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 1, i5'] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and i1 <= i1' < _PB_NQ and 0 <= i5' < _PB_NP }
+
+#dep_waw:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_0[i0', i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_0[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i1 < i1' < _PB_NQ; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_1[i0', i1', i2' = 0, i3' = i3, i4' = 1, i5'] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_1[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 1, i5'] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i1 < i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_1[i0' = i0, i1' = i1, i2' = 0, i3' = i3, i4' = 1, i5'] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i5 >= 0 and i5 < i5' < _PB_NP; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_0[i0', i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_0[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and i1 < i1' < _PB_NQ; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_1[i0', i1', i2' = 0, i3' = i3, i4' = 1, i5'] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_1[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 1, i5'] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and i1 <= i1' < _PB_NQ and 0 <= i5' < _PB_NP }
+
+#dep_war:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_2[i0, i1, i2 = 1, i3, i4 = 0, i5 = _PB_NP] -> S_0[i0', i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ; S_2[i0, i1, i2 = 1, i3, i4 = 0, i5 = _PB_NP] -> S_0[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and i1 < i1' < _PB_NQ; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_2[i0' = i0, i1' = i1, i2' = 1, i3' = i5, i4' = 0, i5' = _PB_NP] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP; S_2[i0, i1, i2 = 1, i3, i4 = 0, i5 = _PB_NP] -> S_1[i0', i1', i2' = 0, i3' = i3, i4' = 1, i5'] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_2[i0, i1, i2 = 1, i3, i4 = 0, i5 = _PB_NP] -> S_1[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 1, i5'] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and i1 < i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_1[i0', i1', i2' = 0, i3' = i3, i4' = 1, i5'] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_1[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 1, i5'] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i1 < i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_1[i0' = i0, i1' = i1, i2' = 0, i3' = i3, i4' = 1, i5'] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i5 >= 0 and i5 < i5' < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_0[i0', i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_0[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i1 < i1' < _PB_NQ }
+
+#relations:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_1[i0', i1', i2' = 0, i3' = i3, i4' = 1, i5'] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_1[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 1, i5'] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i1 < i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_1[i0' = i0, i1' = i1, i2' = 0, i3' = i3, i4' = 1, i5'] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i5 >= 0 and i5 < i5' < _PB_NP; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_2[i0', i1', i2' = 1, i3' = i3, i4' = 0, i5' = _PB_NP] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_2[i0' = i0, i1', i2' = 1, i3' = i3, i4' = 0, i5' = _PB_NP] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and i1 <= i1' < _PB_NQ; S_2[i0, i1, i2 = 1, i3, i4 = 0, i5 = _PB_NP] -> S_0[i0', i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ; S_2[i0, i1, i2 = 1, i3, i4 = 0, i5 = _PB_NP] -> S_0[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and i1 < i1' < _PB_NQ; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_0[i0', i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_0[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and i1 < i1' < _PB_NQ; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_0[i0', i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_0[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 0, i5' = 0] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i1 < i1' < _PB_NQ; S_2[i0, i1, i2 = 1, i3, i4 = 0, i5 = _PB_NP] -> S_1[i0', i1', i2' = 0, i3' = i3, i4' = 1, i5'] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_2[i0, i1, i2 = 1, i3, i4 = 0, i5 = _PB_NP] -> S_1[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 1, i5'] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and i1 < i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_2[i0', i1', i2' = 1, i3' = i3, i4' = 0, i5' = _PB_NP] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_2[i0' = i0, i1', i2' = 1, i3' = i3, i4' = 0, i5' = _PB_NP] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP and i1 <= i1' < _PB_NQ; S_1[i0, i1, i2 = 0, i3, i4 = 1, i5] -> S_2[i0' = i0, i1' = i1, i2' = 1, i3' = i5, i4' = 0, i5' = _PB_NP] : 0 <= i0 < _PB_NR and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and 0 <= i5 < _PB_NP; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_1[i0', i1', i2' = 0, i3' = i3, i4' = 1, i5'] : i0 >= 0 and 0 <= i1 < _PB_NQ and 0 <= i3 < _PB_NP and i0 < i0' < _PB_NR and 0 <= i1' < _PB_NQ and 0 <= i5' < _PB_NP; S_0[i0, i1, i2 = 0, i3, i4 = 0, i5 = 0] -> S_1[i0' = i0, i1', i2' = 0, i3' = i3, i4' = 1, i5'] : 0 <= i0 < _PB_NR and i1 >= 0 and 0 <= i3 < _PB_NP and i1 <= i1' < _PB_NQ and 0 <= i5' < _PB_NP }
+
+#delta:
+{ [i0, i1, i2 = 1, i3 = 0, i4, i5] : i0 > 0 and -1 <= i4 <= 0 and i5 > 0; [i0, i1, i2, i3 = 0, i4 = -1 - i2, i5] : i0 > 0 and -1 <= i2 <= 0 and i5 <= i2; [i0, i1, i2 = 0, i3 = 0, i4 = 1, i5] : i0 > 0 and i5 >= 0; [i0, i1, i2 = -1, i3 = 0, i4 = 1, i5] : i0 > 0 and i5 < 0; [i0 = 0, i1, i2, i3 = 0, i4 = 1 - i2, i5] : i1 >= 0 and 0 <= i2 <= 1 and i5 >= i2; [i0, i1, i2 = 0, i3 = 0, i4 = 0, i5] : i0 > 0; [i0 = 0, i1, i2, i3 = 0, i4 = -1 - i2, i5] : i1 > 0 and -1 <= i2 <= 0 and i5 <= i2; [i0 = 0, i1, i2 = -1, i3 = 0, i4 = 1, i5] : i1 > 0 and i5 < 0; [i0 = 0, i1, i2 = 0, i3 = 0, i4 = 0, i5] : i1 > 0; [i0 = 0, i1 = 0, i2 = 1, i3, i4 = -1, i5] : i5 > 0 and i5 > -i3; [i0 = 0, i1, i2 = 1, i3 = 0, i4 = -1, i5] : i1 >= 0 and i5 > 0; [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5] : i5 > 0 }
+
+#######################################################################
+
+#######################################################################
+
+#normalized loop (0):
+
+#loop tile start
+
+#dim info analyze start
+
+#dim info analyze stop
+
+#delta analyze start
+
+#distance vector set : { [i0 = 2, i1 = 0, i2 = 1, i3 = 0, i4 = 0, i5 = 2] }
+
+#distance vector set : { [i0 = 2, i1 = 0, i2 = 1, i3 = 0, i4 = 0, i5 = 1] }
+
+#distance vector set : { [i0 = 2, i1 = 0, i2 = 1, i3 = 0, i4 = -1, i5 = 2] }
+
+#distance vector set : { [i0 = 2, i1 = 0, i2 = 1, i3 = 0, i4 = -1, i5 = 1] }
+
+#distance vector set : { [i0 = 1, i1 = 0, i2 = 1, i3 = 0, i4 = 0, i5 = 2] }
+
+#distance vector set : { [i0 = 1, i1 = 0, i2 = 1, i3 = 0, i4 = 0, i5 = 1] }
+
+#distance vector set : { [i0 = 1, i1 = 0, i2 = 1, i3 = 0, i4 = -1, i5 = 2] }
+
+#distance vector set : { [i0 = 1, i1 = 0, i2 = 1, i3 = 0, i4 = -1, i5 = 1] }
+
+#distance vector set : { [i0 = 2, i1 = 0, i2 = 0, i3 = 0, i4 = -1, i5 = 0] }
+
+#distance vector set : { [i0 = 2, i1 = 0, i2 = 0, i3 = 0, i4 = -1, i5 = -1] }
+
+#distance vector set : { [i0 = 2, i1 = 0, i2 = -1, i3 = 0, i4 = 0, i5 = -1] }
+
+#distance vector set : { [i0 = 2, i1 = 0, i2 = -1, i3 = 0, i4 = 0, i5 = -2] }
+
+#distance vector set : { [i0 = 1, i1 = 0, i2 = 0, i3 = 0, i4 = -1, i5 = 0] }
+
+#distance vector set : { [i0 = 1, i1 = 0, i2 = 0, i3 = 0, i4 = -1, i5 = -1] }
+
+#distance vector set : { [i0 = 1, i1 = 0, i2 = -1, i3 = 0, i4 = 0, i5 = -1] }
+
+#distance vector set : { [i0 = 1, i1 = 0, i2 = -1, i3 = 0, i4 = 0, i5 = -2] }
+
+#distance vector set : { [i0 = 2, i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 0] }
+
+#distance vector set : { [i0 = 1, i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 0] }
+
+#distance vector set : { [i0 = 2, i1 = 0, i2 = 0, i3 = 0, i4 = 1, i5 = 1] }
+
+#distance vector set : { [i0 = 2, i1 = 0, i2 = 0, i3 = 0, i4 = 1, i5 = 0] }
+
+#distance vector set : { [i0 = 1, i1 = 0, i2 = 0, i3 = 0, i4 = 1, i5 = 1] }
+
+#distance vector set : { [i0 = 1, i1 = 0, i2 = 0, i3 = 0, i4 = 1, i5 = 0] }
+
+#distance vector set : { [i0 = 2, i1 = 0, i2 = -1, i3 = 0, i4 = 1, i5 = -1] }
+
+#distance vector set : { [i0 = 2, i1 = 0, i2 = -1, i3 = 0, i4 = 1, i5 = -2] }
+
+#distance vector set : { [i0 = 1, i1 = 0, i2 = -1, i3 = 0, i4 = 1, i5 = -1] }
+
+#distance vector set : { [i0 = 1, i1 = 0, i2 = -1, i3 = 0, i4 = 1, i5 = -2] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 1, i3 = 0, i4 = 0, i5 = 2] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 1, i3 = 0, i4 = 0, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 0, i3 = 0, i4 = 1, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 0, i3 = 0, i4 = 1, i5 = 0] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 1, i3 = 0, i4 = 0, i5 = 2] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 1, i3 = 0, i4 = 0, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 1, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 1, i5 = 0] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = 0, i3 = 0, i4 = -1, i5 = 0] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = 0, i3 = 0, i4 = -1, i5 = -1] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = -1, i3 = 0, i4 = 0, i5 = -1] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = -1, i3 = 0, i4 = 0, i5 = -2] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 0, i3 = 0, i4 = -1, i5 = 0] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 0, i3 = 0, i4 = -1, i5 = -1] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = -1, i3 = 0, i4 = 0, i5 = -1] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = -1, i3 = 0, i4 = 0, i5 = -2] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = 0, i3 = 0, i4 = 0, i5 = 0] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 0, i3 = 0, i4 = 0, i5 = 0] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = -1, i3 = 0, i4 = 1, i5 = -1] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = -1, i3 = 0, i4 = 1, i5 = -2] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = -1, i3 = 0, i4 = 1, i5 = -1] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = -1, i3 = 0, i4 = 1, i5 = -2] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 1, i3 = 0, i4 = -1, i5 = 2] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 1, i3 = 0, i4 = -1, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 1, i3 = 0, i4 = -1, i5 = 2] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 1, i3 = 0, i4 = -1, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 1, i3 = 0, i4 = -1, i5 = 2] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 1, i3 = 0, i4 = -1, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 2] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 1] }
+
+#delta:
+{ [i0, i1, i2 = 1, i3 = 0, i4, i5] : i0 > 0 and -1 <= i4 <= 0 and i5 > 0; [i0, i1, i2, i3 = 0, i4 = -1 - i2, i5] : i0 > 0 and -1 <= i2 <= 0 and i5 <= i2; [i0, i1, i2 = 0, i3 = 0, i4 = 1, i5] : i0 > 0 and i5 >= 0; [i0, i1, i2 = -1, i3 = 0, i4 = 1, i5] : i0 > 0 and i5 < 0; [i0 = 0, i1, i2, i3 = 0, i4 = 1 - i2, i5] : i1 >= 0 and 0 <= i2 <= 1 and i5 >= i2; [i0, i1, i2 = 0, i3 = 0, i4 = 0, i5] : i0 > 0; [i0 = 0, i1, i2, i3 = 0, i4 = -1 - i2, i5] : i1 > 0 and -1 <= i2 <= 0 and i5 <= i2; [i0 = 0, i1, i2 = -1, i3 = 0, i4 = 1, i5] : i1 > 0 and i5 < 0; [i0 = 0, i1, i2 = 0, i3 = 0, i4 = 0, i5] : i1 > 0; [i0 = 0, i1 = 0, i2 = 1, i3, i4 = -1, i5] : i5 > 0 and i5 > -i3; [i0 = 0, i1, i2 = 1, i3 = 0, i4 = -1, i5] : i1 >= 0 and i5 > 0; [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5] : i5 > 0 }
+
+#dim [i0]: is parameter, is positive
+
+#dim [i1]: is parameter, is negative, is positive
+
+#dim [i2]: is order
+
+#dim [i3]: is parameter, is negative, is positive
+
+#dim [i4]: is order
+
+#dim [i5]: is parameter, is negative, is positive
+
+#delta analyze stop
+
+#create tile equations start
+
+#tile equations: {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 >= 0  and a2 <= 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a1 != 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 }
+
+#parallel free equation: {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 >= 0  and a2 <= 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a1 != 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 = 0 }
+
+#create tile equations stop
+
+#create hyperplanes start
+
+#hyperplane for dim parallel free: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a1 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 >= 0  and a2 <= 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a1 != 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 = 0 } )
+
+#result: { [d0, b0, c0, a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane: { [a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane check: hyperplane is empty 
+
+#result: false
+
+#hyperplane for dim parallel free: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a2 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 >= 0  and a2 <= 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a1 != 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 = 0 } )
+
+#result: { [d0, b0, c0, a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane: { [a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane check: hyperplane is empty 
+
+#result: false
+
+#hyperplane for dim parallel free: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a4 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 >= 0  and a2 <= 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a1 != 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 = 0 } )
+
+#result: { [d0, b0, c0, a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane: { [a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane check: hyperplane is empty 
+
+#result: false
+
+#hyperplane for dim parallel free: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a6 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 >= 0  and a2 <= 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a1 != 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 = 0 } )
+
+#result: { [d0, b0, c0, a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane: { [a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane check: hyperplane is empty 
+
+#result: false
+
+#hyperplane for dim: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a1 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 >= 0  and a2 <= 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a1 != 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 } )
+
+#result: { [d0 = 0, b0 = 1, c0 = -6, a1 = 1, a2 = 0, a3 = 0, a4 = 0, a5 = 0, a6 = 0] }
+
+#hyperplane: { [a1 = 1, a2 = 0, a3 = 0, a4 = 0, a5 = 0, a6 = 0] }
+
+#hyperplane check: first hyperplane 
+
+#result: true
+
+#hyperplane for dim: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a2 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 >= 0  and a2 <= 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a1 != 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 } )
+
+#result: { [d0, b0, c0, a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane: { [a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane check: hyperplane is empty 
+
+#result: false
+
+#hyperplane for dim: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a4 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 >= 0  and a2 <= 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a1 != 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 } )
+
+#result: { [d0, b0, c0, a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane: { [a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane check: hyperplane is empty 
+
+#result: false
+
+#hyperplane for dim: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a6 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 >= 0  and a2 <= 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a1 != 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 2*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 1*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 2*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 1*a1 + 0*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 2*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 1*a1 + 0*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 } )
+
+#result: { [d0, b0, c0, a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane: { [a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane check: hyperplane is empty 
+
+#result: false
+
+#create hyperplanes stop
+
+#create spaces start
+
+#part: [_PB_NR, _PB_NQ, _PB_NP] -> { [i0, i1, i2, i3, i4, i5] -> [  h0, ii0 = i0, ii1 = i1, ii2 = i2, ii3 = i3, ii4 = i4, ii5 = i5] : exists bh0 : 1 * i0 + 0 * i1 + 0 * i2 + 0 * i3 + 0 * i4 + 0 * i5 - bh0 = 0 and 16 * h0 <= bh0 <= 16 * (h0 + 1) - 1 } 
+
+#spaces mapper: [_PB_NR, _PB_NQ, _PB_NP] -> { [i0, i1, i2, i3, i4, i5] -> [h0, ii0 = i0, ii1 = i1, ii2 = i2, ii3 = i3, ii4 = i4, ii5 = i5] : -15 + i0 <= 16h0 <= i0 }
+
+#create spaces stop
+
+#create tile scop start
+
+#tile scop mapper: [_PB_NR, _PB_NQ, _PB_NP] -> { S_2[i0, i1, i2, i3, i4, i5] -> S_2[h0, ii0 = i0, ii1 = i1, ii2 = i2, ii3 = i3, ii4 = i4, ii5 = i5] : -15 + i0 <= 16h0 <= i0; S_0[i0, i1, i2, i3, i4, i5] -> S_0[h0, ii0 = i0, ii1 = i1, ii2 = i2, ii3 = i3, ii4 = i4, ii5 = i5] : -15 + i0 <= 16h0 <= i0; S_1[i0, i1, i2, i3, i4, i5] -> S_1[h0, ii0 = i0, ii1 = i1, ii2 = i2, ii3 = i3, ii4 = i4, ii5 = i5] : -15 + i0 <= 16h0 <= i0 }
+
+#tile scop delta: { [h0, ii0, ii1, ii2 = 1, ii3 = 0, ii4, ii5] : ii0 >= -15 + 16h0 and 0 < ii0 <= 15 + 16h0 and -1 <= ii4 <= 0 and ii5 > 0; [h0, ii0, ii1, ii2, ii3 = 0, ii4 = -1 - ii2, ii5] : ii0 >= -15 + 16h0 and 0 < ii0 <= 15 + 16h0 and -1 <= ii2 <= 0 and ii5 <= ii2; [h0, ii0, ii1, ii2 = 0, ii3 = 0, ii4 = 1, ii5] : ii0 >= -15 + 16h0 and 0 < ii0 <= 15 + 16h0 and ii5 >= 0; [h0, ii0, ii1, ii2 = -1, ii3 = 0, ii4 = 1, ii5] : ii0 >= -15 + 16h0 and 0 < ii0 <= 15 + 16h0 and ii5 < 0; [h0, ii0, ii1, ii2 = 0, ii3 = 0, ii4 = 0, ii5] : ii0 >= -15 + 16h0 and 0 < ii0 <= 15 + 16h0; [h0 = 0, ii0 = 0, ii1, ii2, ii3 = 0, ii4 = 1 - ii2, ii5] : ii1 >= 0 and 0 <= ii2 <= 1 and ii5 >= ii2; [h0 = 0, ii0 = 0, ii1, ii2, ii3 = 0, ii4 = -1 - ii2, ii5] : ii1 > 0 and -1 <= ii2 <= 0 and ii5 <= ii2; [h0 = 0, ii0 = 0, ii1, ii2 = -1, ii3 = 0, ii4 = 1, ii5] : ii1 > 0 and ii5 < 0; [h0 = 0, ii0 = 0, ii1, ii2 = 0, ii3 = 0, ii4 = 0, ii5] : ii1 > 0; [h0 = 0, ii0 = 0, ii1 = 0, ii2 = 1, ii3, ii4 = -1, ii5] : ii5 > 0 and ii5 > -ii3; [h0 = 0, ii0 = 0, ii1, ii2 = 1, ii3 = 0, ii4 = -1, ii5] : ii1 >= 0 and ii5 > 0; [h0 = 0, ii0 = 0, ii1 = 0, ii2 = 0, ii3 = 0, ii4 = 0, ii5] : ii5 > 0 }
+
+#tile scop delta part: { [h0, ii0, ii1, ii2 = 0, ii3 = 0, ii4 = 0, ii5] : ii0 >= -15 + 16h0 and 0 < ii0 <= 15 + 16h0 }
+
+#tile scop delta part: { [h0, ii0, ii1, ii2 = -1, ii3 = 0, ii4 = 1, ii5] : ii0 >= -15 + 16h0 and 0 < ii0 <= 15 + 16h0 and ii5 < 0 }
+
+#tile scop delta part: { [h0 = 0, ii0 = 0, ii1, ii2 = 0, ii3 = 0, ii4 = 0, ii5] : ii1 > 0 }
+
+#tile scop delta part: { [h0, ii0, ii1, ii2 = 0, ii3 = 0, ii4 = 1, ii5] : ii0 >= -15 + 16h0 and 0 < ii0 <= 15 + 16h0 and ii5 >= 0 }
+
+#tile scop delta part: { [h0, ii0, ii1, ii2 = 1, ii3 = 0, ii4, ii5] : ii0 >= -15 + 16h0 and 0 < ii0 <= 15 + 16h0 and -1 <= ii4 <= 0 and ii5 > 0 }
+
+#tile scop delta part: { [h0, ii0, ii1, ii2, ii3 = 0, ii4 = -1 - ii2, ii5] : ii0 >= -15 + 16h0 and 0 < ii0 <= 15 + 16h0 and -1 <= ii2 <= 0 and ii5 <= ii2 }
+
+#tile scop delta part: { [h0 = 0, ii0 = 0, ii1, ii2 = -1, ii3 = 0, ii4 = 1, ii5] : ii1 > 0 and ii5 < 0 }
+
+#tile scop delta part: { [h0 = 0, ii0 = 0, ii1 = 0, ii2 = 0, ii3 = 0, ii4 = 0, ii5] : ii5 > 0 }
+
+#tile scop delta part: { [h0 = 0, ii0 = 0, ii1, ii2 = 1, ii3 = 0, ii4 = -1, ii5] : ii1 >= 0 and ii5 > 0 }
+
+#tile scop delta part: { [h0 = 0, ii0 = 0, ii1 = 0, ii2 = 1, ii3, ii4 = -1, ii5] : ii5 > 0 and ii5 > -ii3 }
+
+#tile scop delta part: { [h0 = 0, ii0 = 0, ii1, ii2, ii3 = 0, ii4 = 1 - ii2, ii5] : ii1 >= 0 and 0 <= ii2 <= 1 and ii5 >= ii2 }
+
+#tile scop delta part: { [h0 = 0, ii0 = 0, ii1, ii2, ii3 = 0, ii4 = -1 - ii2, ii5] : ii1 > 0 and -1 <= ii2 <= 0 and ii5 <= ii2 }
+
+#tile delta: { [h0] : h0 > 0 }
+
+#create tile scop stop
+
+#tile delta analyze start
+
+#tile relatiions distance vector set: { [h0 = 2] }
+
+#tile relatiions distance vector set: { [h0 = 1] }
+
+#tile delta analyze stop
+
+#create wafefront equations start
+
+#wafefront equations: {[d0, b0, c0, a1] : exists b1 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and b0 > 0 and b0 = b1 and 2*a1 > 0 and 1*a1 > 0 }
+
+#create wafefront equations stop
+
+#calculate wafefront hyperplane start
+
+#wafefront hyperplane: lexmin( {[d0 = 0, b0, c0, a1] : exists c1 : ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and c0 = c1 and a1 != 0} * {[d0, b0, c0, a1] : exists b1 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and b0 > 0 and b0 = b1 and 2*a1 > 0 and 1*a1 > 0 } )
+
+#result: { [d0 = 0, b0 = 1, c0 = -1, a1 = 1] }
+
+#wafefront hyperplane: { [a1 = 1] }
+
+#calculate wafefront hyperplane stop
+
+#######################################################################
+
+#continue search for hyperplanes
+
+#######################################################################
+
+#dim info analyze start
+
+#dim info analyze stop
+
+#delta analyze start
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 1, i3 = 0, i4 = 0, i5 = 2] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 1, i3 = 0, i4 = 0, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 0, i3 = 0, i4 = 1, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 0, i3 = 0, i4 = 1, i5 = 0] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 1, i3 = 0, i4 = 0, i5 = 2] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 1, i3 = 0, i4 = 0, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 1, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 1, i5 = 0] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = 0, i3 = 0, i4 = -1, i5 = 0] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = 0, i3 = 0, i4 = -1, i5 = -1] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = -1, i3 = 0, i4 = 0, i5 = -1] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = -1, i3 = 0, i4 = 0, i5 = -2] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 0, i3 = 0, i4 = -1, i5 = 0] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 0, i3 = 0, i4 = -1, i5 = -1] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = -1, i3 = 0, i4 = 0, i5 = -1] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = -1, i3 = 0, i4 = 0, i5 = -2] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = 0, i3 = 0, i4 = 0, i5 = 0] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 0, i3 = 0, i4 = 0, i5 = 0] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = -1, i3 = 0, i4 = 1, i5 = -1] }
+
+#distance vector set : { [i0 = 0, i1 = 2, i2 = -1, i3 = 0, i4 = 1, i5 = -2] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = -1, i3 = 0, i4 = 1, i5 = -1] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = -1, i3 = 0, i4 = 1, i5 = -2] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 1, i3 = 0, i4 = -1, i5 = 2] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 1, i3 = 0, i4 = -1, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 1, i3 = 0, i4 = -1, i5 = 2] }
+
+#distance vector set : { [i0 = 0, i1 = 1, i2 = 1, i3 = 0, i4 = -1, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 1, i3 = 0, i4 = -1, i5 = 2] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 1, i3 = 0, i4 = -1, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 2] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 1] }
+
+#delta:
+{ [i0 = 0, i1, i2, i3 = 0, i4 = 1 - i2, i5] : i1 >= 0 and 0 <= i2 <= 1 and i5 >= i2; [i0 = 0, i1, i2, i3 = 0, i4 = -1 - i2, i5] : i1 > 0 and -1 <= i2 <= 0 and i5 <= i2; [i0 = 0, i1, i2 = -1, i3 = 0, i4 = 1, i5] : i1 > 0 and i5 < 0; [i0 = 0, i1, i2 = 0, i3 = 0, i4 = 0, i5] : i1 > 0; [i0 = 0, i1 = 0, i2 = 1, i3, i4 = -1, i5] : i5 > 0 and i5 > -i3; [i0 = 0, i1, i2 = 1, i3 = 0, i4 = -1, i5] : i1 >= 0 and i5 > 0; [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5] : i5 > 0 }
+
+#dim [i0]: is wavefront order
+
+#dim [i1]: is parameter, is positive
+
+#dim [i2]: is order
+
+#dim [i3]: is parameter, is negative, is positive
+
+#dim [i4]: is order
+
+#dim [i5]: is parameter, is negative, is positive
+
+#delta analyze stop
+
+#create tile equations start
+
+#tile equations: {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 = 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 }
+
+#parallel free equation: {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 = 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 = 0 }
+
+#create tile equations stop
+
+#create hyperplanes start
+
+#hyperplane for dim parallel free: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a2 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 = 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 = 0 } )
+
+#result: { [d0, b0, c0, a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane: { [a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane check: hyperplane is empty 
+
+#result: false
+
+#hyperplane for dim parallel free: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a4 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 = 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 = 0 } )
+
+#result: { [d0, b0, c0, a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane: { [a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane check: hyperplane is empty 
+
+#result: false
+
+#hyperplane for dim parallel free: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a6 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 = 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 = 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 = 0 } )
+
+#result: { [d0, b0, c0, a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane: { [a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane check: hyperplane is empty 
+
+#result: false
+
+#hyperplane for dim: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a2 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 = 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 } )
+
+#result: { [d0 = 0, b0 = 1, c0 = -6, a1 = 0, a2 = 1, a3 = 0, a4 = 0, a5 = 0, a6 = 0] }
+
+#hyperplane: { [a1 = 0, a2 = 1, a3 = 0, a4 = 0, a5 = 0, a6 = 0] }
+
+#hyperplane check: first hyperplane 
+
+#result: true
+
+#hyperplane for dim: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a4 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 = 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 } )
+
+#result: { [d0, b0, c0, a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane: { [a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane check: hyperplane is empty 
+
+#result: false
+
+#hyperplane for dim: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a6 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 = 0  and a2 >= 0  and a4 <= 0  and a4 >= 0  and a6 <= 0  and a6 >= 0  and ( 1 = 0  or a2 != 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 2*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 1*a3 + 0*a4 + -1*a5 + 1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + 0*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + 0*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 1*a2 + 0*a3 + 0*a4 + -1*a5 + -1*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 1*a5 + -2*a6 >= 0 and 0*a1 + 2*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 1*a2 + -1*a3 + 0*a4 + 0*a5 + -2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 } )
+
+#result: { [d0, b0, c0, a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane: { [a1, a2, a3, a4, a5, a6] : false }
+
+#hyperplane check: hyperplane is empty 
+
+#result: false
+
+#create hyperplanes stop
+
+#create spaces start
+
+#part: [_PB_NR, _PB_NQ, _PB_NP] -> { [i0, i1, i2, i3, i4, i5] -> [  ii0 = i0, h0, ii1 = i1, ii2 = i2, ii3 = i3, ii4 = i4, ii5 = i5] : exists bh0 : 0 * i0 + 1 * i1 + 0 * i2 + 0 * i3 + 0 * i4 + 0 * i5 - bh0 = 0 and 16 * h0 <= bh0 <= 16 * (h0 + 1) - 1 } 
+
+#spaces mapper: [_PB_NR, _PB_NQ, _PB_NP] -> { [i0, i1, i2, i3, i4, i5] -> [ii0 = i0, h0, ii1 = i1, ii2 = i2, ii3 = i3, ii4 = i4, ii5 = i5] : -15 + i1 <= 16h0 <= i1 }
+
+#create spaces stop
+
+#create tile scop start
+
+#tile scop mapper: [_PB_NR, _PB_NQ, _PB_NP] -> { S_2[i0, i1, i2, i3, i4, i5] -> S_2[ii0 = i0, h0, ii1 = i1, ii2 = i2, ii3 = i3, ii4 = i4, ii5 = i5] : -15 + i1 <= 16h0 <= i1; S_0[i0, i1, i2, i3, i4, i5] -> S_0[ii0 = i0, h0, ii1 = i1, ii2 = i2, ii3 = i3, ii4 = i4, ii5 = i5] : -15 + i1 <= 16h0 <= i1; S_1[i0, i1, i2, i3, i4, i5] -> S_1[ii0 = i0, h0, ii1 = i1, ii2 = i2, ii3 = i3, ii4 = i4, ii5 = i5] : -15 + i1 <= 16h0 <= i1 }
+
+#tile scop delta: { [ii0, h0, ii1, ii2 = 1, ii3 = 0, ii4, ii5] : ii0 > 0 and -15 + 16h0 <= ii1 <= 15 + 16h0 and -1 <= ii4 <= 0 and ii5 > 0; [ii0, h0, ii1, ii2, ii3 = 0, ii4 = -1 - ii2, ii5] : ii0 > 0 and -15 + 16h0 <= ii1 <= 15 + 16h0 and -1 <= ii2 <= 0 and ii5 <= ii2; [ii0, h0, ii1, ii2 = 0, ii3 = 0, ii4 = 1, ii5] : ii0 > 0 and -15 + 16h0 <= ii1 <= 15 + 16h0 and ii5 >= 0; [ii0, h0, ii1, ii2 = -1, ii3 = 0, ii4 = 1, ii5] : ii0 > 0 and -15 + 16h0 <= ii1 <= 15 + 16h0 and ii5 < 0; [ii0 = 0, h0, ii1, ii2, ii3 = 0, ii4 = 1 - ii2, ii5] : ii1 >= -15 + 16h0 and 0 <= ii1 <= 15 + 16h0 and 0 <= ii2 <= 1 and ii5 >= ii2; [ii0, h0, ii1, ii2 = 0, ii3 = 0, ii4 = 0, ii5] : ii0 > 0 and -15 + 16h0 <= ii1 <= 15 + 16h0; [ii0 = 0, h0, ii1, ii2, ii3 = 0, ii4 = -1 - ii2, ii5] : ii1 >= -15 + 16h0 and 0 < ii1 <= 15 + 16h0 and -1 <= ii2 <= 0 and ii5 <= ii2; [ii0 = 0, h0, ii1, ii2 = -1, ii3 = 0, ii4 = 1, ii5] : ii1 >= -15 + 16h0 and 0 < ii1 <= 15 + 16h0 and ii5 < 0; [ii0 = 0, h0, ii1, ii2 = 0, ii3 = 0, ii4 = 0, ii5] : ii1 >= -15 + 16h0 and 0 < ii1 <= 15 + 16h0; [ii0 = 0, h0, ii1, ii2 = 1, ii3 = 0, ii4 = -1, ii5] : ii1 >= -15 + 16h0 and 0 <= ii1 <= 15 + 16h0 and ii5 > 0; [ii0 = 0, h0 = 0, ii1 = 0, ii2 = 1, ii3, ii4 = -1, ii5] : ii5 > 0 and ii5 > -ii3; [ii0 = 0, h0 = 0, ii1 = 0, ii2 = 0, ii3 = 0, ii4 = 0, ii5] : ii5 > 0 }
+
+#tile scop delta part: { [ii0, h0, ii1, ii2, ii3, ii4, ii5] : false }
+
+#tile scop delta part: { [ii0, h0, ii1, ii2, ii3, ii4, ii5] : false }
+
+#tile scop delta part: { [ii0 = 0, h0, ii1, ii2 = 0, ii3 = 0, ii4 = 0, ii5] : ii1 >= -15 + 16h0 and 0 < ii1 <= 15 + 16h0 }
+
+#tile scop delta part: { [ii0, h0, ii1, ii2, ii3, ii4, ii5] : false }
+
+#tile scop delta part: { [ii0, h0, ii1, ii2, ii3, ii4, ii5] : false }
+
+#tile scop delta part: { [ii0, h0, ii1, ii2, ii3, ii4, ii5] : false }
+
+#tile scop delta part: { [ii0 = 0, h0, ii1, ii2 = -1, ii3 = 0, ii4 = 1, ii5] : ii1 >= -15 + 16h0 and 0 < ii1 <= 15 + 16h0 and ii5 < 0 }
+
+#tile scop delta part: { [ii0 = 0, h0 = 0, ii1 = 0, ii2 = 0, ii3 = 0, ii4 = 0, ii5] : ii5 > 0 }
+
+#tile scop delta part: { [ii0 = 0, h0, ii1, ii2 = 1, ii3 = 0, ii4 = -1, ii5] : ii1 >= -15 + 16h0 and 0 <= ii1 <= 15 + 16h0 and ii5 > 0 }
+
+#tile scop delta part: { [ii0 = 0, h0 = 0, ii1 = 0, ii2 = 1, ii3, ii4 = -1, ii5] : ii5 > 0 and ii5 > -ii3 }
+
+#tile scop delta part: { [ii0 = 0, h0, ii1, ii2, ii3 = 0, ii4 = 1 - ii2, ii5] : ii1 >= -15 + 16h0 and 0 <= ii1 <= 15 + 16h0 and 0 <= ii2 <= 1 and ii5 >= ii2 }
+
+#tile scop delta part: { [ii0 = 0, h0, ii1, ii2, ii3 = 0, ii4 = -1 - ii2, ii5] : ii1 >= -15 + 16h0 and 0 < ii1 <= 15 + 16h0 and -1 <= ii2 <= 0 and ii5 <= ii2 }
+
+#tile delta: { [h0] : h0 > 0 }
+
+#create tile scop stop
+
+#tile delta analyze start
+
+#tile relatiions distance vector set: { [h0 = 2] }
+
+#tile relatiions distance vector set: { [h0 = 1] }
+
+#tile delta analyze stop
+
+#create wafefront equations start
+
+#wafefront equations: {[d0, b0, c0, a1] : exists b1 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and b0 > 0 and b0 = b1 and 2*a1 > 0 and 1*a1 > 0 }
+
+#create wafefront equations stop
+
+#calculate wafefront hyperplane start
+
+#wafefront hyperplane: lexmin( {[d0 = 0, b0, c0, a1] : exists c1 : ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and c0 = c1 and a1 != 0} * {[d0, b0, c0, a1] : exists b1 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and b0 > 0 and b0 = b1 and 2*a1 > 0 and 1*a1 > 0 } )
+
+#result: { [d0 = 0, b0 = 1, c0 = -1, a1 = 1] }
+
+#wafefront hyperplane: { [a1 = 1] }
+
+#calculate wafefront hyperplane stop
+
+#######################################################################
+
+#continue search for hyperplanes
+
+#######################################################################
+
+#dim info analyze start
+
+#dim info analyze stop
+
+#delta analyze start
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 1, i5 = 1] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 1, i5 = 0] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 2] }
+
+#distance vector set : { [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4 = 0, i5 = 1] }
+
+#delta:
+{ [i0 = 0, i1 = 0, i2 = 0, i3 = 0, i4, i5] : 0 <= i4 <= 1 and i5 > -i4 }
+
+#dim [i0]: is wavefront order
+
+#dim [i1]: is wavefront order
+
+#dim [i2]: is wavefront order
+
+#dim [i3]: is bounded
+
+#dim [i4]: is order
+
+#dim [i5]: is parameter, is positive
+
+#delta analyze stop
+
+#create tile equations start
+
+#tile equations: {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 = 0  and a2 = 0  and a3 = 0  and a6 >= 0  and ( 1 = 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 }
+
+#parallel free equation: {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 = 0  and a2 = 0  and a3 = 0  and a6 >= 0  and ( 1 = 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 = 0 }
+
+#create tile equations stop
+
+#create hyperplanes start
+
+#hyperplane for dim parallel free: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a4 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 = 0  and a2 = 0  and a3 = 0  and a6 >= 0  and ( 1 = 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 = 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 = 0 } )
+
+#result: { [d0 = 0, b0 = 1, c0 = -6, a1 = 0, a2 = 0, a3 = 0, a4 = 1, a5 = 0, a6 = 0] }
+
+#hyperplane: { [a1 = 0, a2 = 0, a3 = 0, a4 = 1, a5 = 0, a6 = 0] }
+
+#hyperplane check: first hyperplane 
+
+#result: true
+
+#hyperplane for dim: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a4 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 = 0  and a2 = 0  and a3 = 0  and a6 >= 0  and ( 1 = 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 } )
+
+#result: { [d0 = 0, b0 = 1, c0 = -6, a1 = 0, a2 = 0, a3 = 0, a4 = 1, a5 = 0, a6 = 0] }
+
+#hyperplane: { [a1 = 0, a2 = 0, a3 = 0, a4 = 1, a5 = 0, a6 = 0] }
+
+#hyperplane check: { : exists c1, c2 : ( c1!=0 or c2!=0 ) and c2*0 = c1*0 and c2*0 = c1*0 and c2*0 = c1*0 and c2*1 = c1*1 and c2*0 = c1*0 and c2*0 = c1*0 } = {}
+
+#result: false
+
+#hyperplane for dim: lexmin( {[d0 = 0, b0, c0, a1, a2, a3, a4, a5, a6] : a6 != 0 } * {[d0, b0, c0, a1, a2, a3, a4, a5, a6] : exists b1, c1, b2, c2, b3, c3, b4, c4, b5, c5, b6, c6 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and ((b3 = a3 and a3 >= 0) or (b3 = -a3 and a3 < 0)) and ((c3 = -1 and a3 >= 0) or (c3 = 0 and a3 < 0)) and ((b4 = a4 and a4 >= 0) or (b4 = -a4 and a4 < 0)) and ((c4 = -1 and a4 >= 0) or (c4 = 0 and a4 < 0)) and ((b5 = a5 and a5 >= 0) or (b5 = -a5 and a5 < 0)) and ((c5 = -1 and a5 >= 0) or (c5 = 0 and a5 < 0)) and ((b6 = a6 and a6 >= 0) or (b6 = -a6 and a6 < 0)) and ((c6 = -1 and a6 >= 0) or (c6 = 0 and a6 < 0)) and b0 > 0 and b0 = b1 + b2 + b3 + b4 + b5 + b6 and c0 = c1 + c2 + c3 + c4 + c5 + c6 and a1 = 0  and a2 = 0  and a3 = 0  and a6 >= 0  and ( 1 = 0  or a4 != 0  or a6 != 0  )  and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 2*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 1*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 1*a5 + 0*a6 >= 0 and 0*a1 + 0*a2 + 0*a3 + 0*a4 + 0*a5 + 1*a6 >= 0 } )
+
+#result: { [d0 = 0, b0 = 1, c0 = -6, a1 = 0, a2 = 0, a3 = 0, a4 = 0, a5 = 0, a6 = 1] }
+
+#hyperplane: { [a1 = 0, a2 = 0, a3 = 0, a4 = 0, a5 = 0, a6 = 1] }
+
+#hyperplane check: { : exists c1, c2 : ( c1!=0 or c2!=0 ) and c2*0 = c1*0 and c2*0 = c1*0 and c2*0 = c1*0 and c2*0 = c1*1 and c2*0 = c1*0 and c2*1 = c1*0 } = {}
+
+#result: true
+
+#create hyperplanes stop
+
+#create spaces start
+
+#part: [_PB_NR, _PB_NQ, _PB_NP] -> { [i0, i1, i2, i3, i4, i5] -> [  ii0 = i0, ii1 = i1, ii2 = i2, h0, h1, ii3 = i3, ii4 = i4, ii5 = i5] : exists bh0 : 0 * i0 + 0 * i1 + 0 * i2 + 1 * i3 + 0 * i4 + 0 * i5 - bh0 = 0 and 16 * h0 <= bh0 <= 16 * (h0 + 1) - 1 } 
+
+#part: [_PB_NR, _PB_NQ, _PB_NP] -> { [i0, i1, i2, i3, i4, i5] -> [  ii0 = i0, ii1 = i1, ii2 = i2, h0, h1, ii3 = i3, ii4 = i4, ii5 = i5] : exists bh1 : 0 * i0 + 0 * i1 + 0 * i2 + 0 * i3 + 0 * i4 + 1 * i5 - bh1 = 0 and 16 * h1 <= bh1 <= 16 * (h1 + 1) - 1 } 
+
+#spaces mapper: [_PB_NR, _PB_NQ, _PB_NP] -> { [i0, i1, i2, i3, i4, i5] -> [ii0 = i0, ii1 = i1, ii2 = i2, h0, h1, ii3 = i3, ii4 = i4, ii5 = i5] : -15 + i3 <= 16h0 <= i3 and -15 + i5 <= 16h1 <= i5 }
+
+#create spaces stop
+
+#create tile scop start
+
+#tile scop mapper: [_PB_NR, _PB_NQ, _PB_NP] -> { S_2[i0, i1, i2, i3, i4, i5] -> S_2[ii0 = i0, ii1 = i1, ii2 = i2, h0, h1, ii3 = i3, ii4 = i4, ii5 = i5] : -15 + i3 <= 16h0 <= i3 and -15 + i5 <= 16h1 <= i5; S_1[i0, i1, i2, i3, i4, i5] -> S_1[ii0 = i0, ii1 = i1, ii2 = i2, h0, h1, ii3 = i3, ii4 = i4, ii5 = i5] : -15 + i3 <= 16h0 <= i3 and -15 + i5 <= 16h1 <= i5; S_0[i0, i1, i2, i3, i4, i5] -> S_0[ii0 = i0, ii1 = i1, ii2 = i2, h0, h1, ii3 = i3, ii4 = i4, ii5 = i5] : -15 + i3 <= 16h0 <= i3 and -15 + i5 <= 16h1 <= i5 }
+
+#tile scop delta: { [ii0, ii1, ii2, h0 = 0, h1, ii3 = 0, ii4, ii5] : ii0 > 0 and ((ii2 >= -1 and -1 - ii2 <= ii4 < -2ii2 and -15 + 16h1 <= ii5 <= ii2 and ii5 <= 15 + 15ii2 + 16h1 + 15ii4) or (ii2 <= 1 and -2ii2 < ii4 <= 1 - ii2 and ii5 >= -15 + 15ii2 + 16h1 + 15ii4 and ii2 <= ii5 <= 15 + 16h1)); [ii0 = 0, ii1, ii2 = 0, h0 = 0, h1, ii3 = 0, ii4 = 0, ii5] : ii1 > 0 and -15 + 16h1 <= ii5 <= 15 + 16h1; [ii0 = 0, ii1, ii2, h0 = 0, h1, ii3 = 0, ii4, ii5] : ii1 >= 0 and ((ii1 > 0 and ii2 >= -1 and -1 - ii2 <= ii4 < -2ii2 and -15 + 16h1 <= ii5 <= ii2 and ii5 <= 15 + 15ii2 + 16h1 + 15ii4) or (ii2 <= 1 and -2ii2 < ii4 <= 1 - ii2 and ii5 >= -15 + 15ii2 + 16h1 + 15ii4 and ii2 <= ii5 <= 15 + 16h1)); [ii0 = 0, ii1 = 0, ii2 = 0, h0 = 0, h1, ii3 = 0, ii4 = 0, ii5] : ii5 >= -15 + 16h1 and 0 < ii5 <= 15 + 16h1; [ii0, ii1, ii2 = 0, h0 = 0, h1, ii3 = 0, ii4 = 0, ii5] : ii0 > 0 and -15 + 16h1 <= ii5 <= 15 + 16h1; [ii0 = 0, ii1 = 0, ii2 = 1, h0, h1, ii3, ii4 = -1, ii5] : -15 + 16h0 <= ii3 <= 15 + 16h0 and ii5 >= -15 + 16h0 + 16h1 - ii3 and ii5 >= -15 + 16h1 and ii5 > 0 and -ii3 < ii5 <= 15 + 16h1 and ii5 <= 15 + 16h0 + 16h1 - ii3 }
+
+#tile scop delta part: { [ii0, ii1, ii2, h0, h1, ii3, ii4, ii5] : false }
+
+#tile scop delta part: { [ii0, ii1, ii2, h0, h1, ii3, ii4, ii5] : false }
+
+#tile scop delta part: { [ii0, ii1, ii2, h0, h1, ii3, ii4, ii5] : false }
+
+#tile scop delta part: { [ii0, ii1, ii2, h0, h1, ii3, ii4, ii5] : false }
+
+#tile scop delta part: { [ii0, ii1, ii2, h0, h1, ii3, ii4, ii5] : false }
+
+#tile scop delta part: { [ii0 = 0, ii1 = 0, ii2 = 0, h0 = 0, h1, ii3 = 0, ii4 = 0, ii5] : ii5 >= -15 + 16h1 and 0 < ii5 <= 15 + 16h1 }
+
+#tile scop delta part: { [ii0, ii1, ii2, h0, h1, ii3, ii4, ii5] : false }
+
+#tile scop delta part: { [ii0 = 0, ii1 = 0, ii2 = 0, h0 = 0, h1, ii3 = 0, ii4 = 1, ii5] : ii5 >= 16h1 and 0 <= ii5 <= 15 + 16h1 }
+
+#tile delta: { [h0 = 0, h1] : h1 > 0 }
+
+#create tile scop stop
+
+#tile delta analyze start
+
+#tile relatiions distance vector set: { [h0 = 0, h1 = 2] }
+
+#tile relatiions distance vector set: { [h0 = 0, h1 = 1] }
+
+#tile delta analyze stop
+
+#create wafefront equations start
+
+#wafefront equations: {[d0, b0, c0, a1, a2] : exists b1, b2 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and b0 > 0 and b0 = b1 + b2 and 0*a1 + 2*a2 > 0 and 0*a1 + 1*a2 > 0 }
+
+#create wafefront equations stop
+
+#calculate wafefront hyperplane start
+
+#wafefront hyperplane: lexmin( {[d0 = 0, b0, c0, a1, a2] : exists c1, c2 : ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and c0 = c1 + c2 and a1 != 0 and a2 != 0} * {[d0, b0, c0, a1, a2] : exists b1, b2 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and b0 > 0 and b0 = b1 + b2 and 0*a1 + 2*a2 > 0 and 0*a1 + 1*a2 > 0 } )
+
+#result: { [d0 = 0, b0 = 2, c0 = -2, a1 = 1, a2 = 1] }
+
+#wafefront hyperplane: { [a1 = 1, a2 = 1] }
+
+#calculate wafefront hyperplane stop
+
+#create parallel free schedule start
+
+#part: [_PB_NR, _PB_NQ, _PB_NP] -> { S_1[i0, i1, i2, i3, i4, i5] -> [0, i0, i1, i2, w0, h0, h1, 0, 0, 0, 0, tw0, i3, i4, i5] : exists  bw0, bh0, bh1 : 1 = 1 and 0 * i0 + 0 * i1 + 0 * i2 + 1 * i3 + 0 * i4 + 0 * i5 - bh0 = 0 and 16 * h0 <= bh0 <= 16 * (h0 + 1) - 1 and 0 * i0 + 0 * i1 + 0 * i2 + 0 * i3 + 0 * i4 + 1 * i5 - bh1 = 0 and 16 * h1 <= bh1 <= 16 * (h1 + 1) - 1  and bw0 = 1 * bh0 + 1 * bh1 and tw0 = 0 and w0 = 0 } 
+
+#part: [_PB_NR, _PB_NQ, _PB_NP] -> { S_2[i0, i1, i2, i3, i4, i5] -> [0, i0, i1, i2, w0, h0, h1, 0, 0, 0, 0, tw0, i3, i4, i5] : exists  bw0, bh0, bh1 : 1 = 1 and 0 * i0 + 0 * i1 + 0 * i2 + 1 * i3 + 0 * i4 + 0 * i5 - bh0 = 0 and 16 * h0 <= bh0 <= 16 * (h0 + 1) - 1 and 0 * i0 + 0 * i1 + 0 * i2 + 0 * i3 + 0 * i4 + 1 * i5 - bh1 = 0 and 16 * h1 <= bh1 <= 16 * (h1 + 1) - 1  and bw0 = 1 * bh0 + 1 * bh1 and tw0 = 0 and w0 = 0 } 
+
+#part: [_PB_NR, _PB_NQ, _PB_NP] -> { S_0[i0, i1, i2, i3, i4, i5] -> [0, i0, i1, i2, w0, h0, h1, 0, 0, 0, 0, tw0, i3, i4, i5] : exists  bw0, bh0, bh1 : 1 = 1 and 0 * i0 + 0 * i1 + 0 * i2 + 1 * i3 + 0 * i4 + 0 * i5 - bh0 = 0 and 16 * h0 <= bh0 <= 16 * (h0 + 1) - 1 and 0 * i0 + 0 * i1 + 0 * i2 + 0 * i3 + 0 * i4 + 1 * i5 - bh1 = 0 and 16 * h1 <= bh1 <= 16 * (h1 + 1) - 1  and bw0 = 1 * bh0 + 1 * bh1 and tw0 = 0 and w0 = 0 } 
+
+#parallel free schedule: [_PB_NR, _PB_NQ, _PB_NP] -> { S_2[i0, i1, i2, i3, i4, i5] -> [0, i0, i1, i2, w0 = 0, h0, h1, 0, 0, 0, 0, tw0 = 0, i3, i4, i5] : -15 + i3 <= 16h0 <= i3 and -15 + i5 <= 16h1 <= i5; S_1[i0, i1, i2, i3, i4, i5] -> [0, i0, i1, i2, w0 = 0, h0, h1, 0, 0, 0, 0, tw0 = 0, i3, i4, i5] : -15 + i3 <= 16h0 <= i3 and -15 + i5 <= 16h1 <= i5; S_0[i0, i1, i2, i3, i4, i5] -> [0, i0, i1, i2, w0 = 0, h0, h1, 0, 0, 0, 0, tw0 = 0, i3, i4, i5] : -15 + i3 <= 16h0 <= i3 and -15 + i5 <= 16h1 <= i5 }
+
+#create parallel free schedule stop
+
+#create code start
+
+#wafefront code: [_PB_NR, _PB_NQ, _PB_NP] -> { S_0[r, q, p] -> [0, r, q, 0, w0 = 0, h0, h1 = 0, 0, 0, 0, 0, tw0 = 0, p, 0, 0] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and -15 + p <= 16h0 <= p; S_2[r, q, p] -> [0, r, q, 1, w0 = 0, h0, h1, 0, 0, 0, 0, tw0 = 0, p, 0, _PB_NP] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and -15 + p <= 16h0 <= p and -15 + _PB_NP <= 16h1 <= _PB_NP; S_1[r, q, p, s] -> [0, r, q, 0, w0 = 0, h0, h1, 0, 0, 0, 0, tw0 = 0, p, 1, s] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP and -15 + p <= 16h0 <= p and -15 + s <= 16h1 <= s }
+
+#create code stop
+
+#loop tile stop
+
+#######################################################################
+
+#######################################################################
+
+#global schedule:
+[_PB_NR, _PB_NQ, _PB_NP] -> { S_2[r, q, p] -> [0, r, q, 1, w0 = 0, h0, h1, 0, 0, 0, 0, tw0 = 0, p, 0, _PB_NP] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and -15 + p <= 16h0 <= p and -15 + _PB_NP <= 16h1 <= _PB_NP; S_1[r, q, p, s] -> [0, r, q, 0, w0 = 0, h0, h1, 0, 0, 0, 0, tw0 = 0, p, 1, s] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and 0 <= s < _PB_NP and -15 + p <= 16h0 <= p and -15 + s <= 16h1 <= s; S_0[r, q, p] -> [0, r, q, 0, w0 = 0, h0, h1 = 0, 0, 0, 0, 0, tw0 = 0, p, 0, 0] : 0 <= r < _PB_NR and 0 <= q < _PB_NQ and 0 <= p < _PB_NP and -15 + p <= 16h0 <= p }
+
+#######################################################################
+
+#######################################################################
+
+#Does global schedule respects oryginal loop RaW deps? -> True
+
+#Does global schedule respects oryginal loop WaW deps? -> True
+
+#Does global schedule respects oryginal loop WaR deps? -> True
+
+#######################################################################

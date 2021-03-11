@@ -1,0 +1,6 @@
+../../../dapt filename=./2mm.c size=16 method=1 --debug-print-on > 2mm.out 2> 2mm.dbg
+../../../dapt filename=./3mm.c size=16 method=1 --debug-print-on > 3mm.out 2> 3mm.dbg
+../../../dapt filename=./atax.c size=16 method=1 --debug-print-on > atax.out 2> atax.dbg
+../../../dapt filename=./bicg.c size=16 method=1 --debug-print-on > bicg.out 2> bicg.dbg
+../../../dapt filename=./doitgen.c size=16 method=1 --debug-print-on > doitgen.out 2> doitgen.dbg
+../../../dapt filename=./mvt.c size=16 method=1 --debug-print-on > mvt.out 2> mvt.dbg

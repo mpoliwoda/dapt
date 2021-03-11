@@ -1,0 +1,223 @@
+
+#######################################################################
+
+#oryginal loop:
+
+#schedule:
+{ domain: "[_PB_W, _PB_H, c2] -> { S_0[i, j] : 0 <= i < _PB_W and 0 <= j < _PB_H }", child: { schedule: "[_PB_W, _PB_H] -> L_0[{ S_0[i, j] -> [(i)] }]", child: { schedule: "[_PB_W, _PB_H] -> L_1[{ S_0[i, j] -> [(j)] }]" } } }
+
+#domain:
+[_PB_W, _PB_H, c2] -> { S_0[i, j] : 0 <= i < _PB_W and 0 <= j < _PB_H }
+
+#schedule map:
+[_PB_W, _PB_H, c2] -> { S_0[i, j] -> [i, j] }
+
+#isl schedule:
+{ domain: "[_PB_W, _PB_H, c2] -> { S_0[i, j] : 0 <= i < _PB_W and 0 <= j < _PB_H }", child: { schedule: "[_PB_W, _PB_H, c2] -> [{ S_0[i, j] -> [(i)] }, { S_0[i, j] -> [(j)] }]", permutable: 1, coincident: [ 1, 1 ] } }
+
+#isl schedule map:
+[_PB_W, _PB_H, c2] -> { S_0[i, j] -> [i, j] }
+
+#writes:
+[_PB_W, _PB_H, c2] -> { S_0[i, j] -> imgOut[i, j] : 0 <= i < _PB_W and 0 <= j < _PB_H }
+
+#reads:
+[_PB_W, _PB_H, c2] -> { S_0[i, j] -> y2[i, j] : 0 <= i < _PB_W and 0 <= j < _PB_H; S_0[i, j] -> y1[i, j] : 0 <= i < _PB_W and 0 <= j < _PB_H }
+
+#dep_raw:
+[_PB_W, _PB_H, c2] -> {  }
+
+#dep_waw:
+[_PB_W, _PB_H, c2] -> {  }
+
+#dep_war:
+[_PB_W, _PB_H, c2] -> {  }
+
+#relations:
+[_PB_W, _PB_H, c2] -> {  }
+
+#delta:
+[_PB_W, _PB_H, c2] -> {  }
+
+#######################################################################
+
+#######################################################################
+
+#norm schedule map:
+[_PB_W, _PB_H, c2] -> { S_0[i, j] -> [i, j] }
+
+#######################################################################
+
+#######################################################################
+
+#normalized loop (0):
+
+#mapper:
+[_PB_W, _PB_H, c2] -> { S_0[i, j] -> S_0[i0 = i, i1 = j] }
+
+#domain:
+[_PB_W, _PB_H, c2] -> { S_0[i0, i1] : 0 <= i0 < _PB_W and 0 <= i1 < _PB_H }
+
+#schedule map:
+[_PB_W, _PB_H, c2] -> { S_0[i0, i1] -> [i0, i1] }
+
+#writes:
+[_PB_W, _PB_H, c2] -> { S_0[i0, i1] -> imgOut[i0, i1] : 0 <= i0 < _PB_W and 0 <= i1 < _PB_H }
+
+#reads:
+[_PB_W, _PB_H, c2] -> { S_0[i0, i1] -> y2[i0, i1] : 0 <= i0 < _PB_W and 0 <= i1 < _PB_H; S_0[i0, i1] -> y1[i0, i1] : 0 <= i0 < _PB_W and 0 <= i1 < _PB_H }
+
+#dep_raw:
+[_PB_W, _PB_H, c2] -> {  }
+
+#dep_waw:
+[_PB_W, _PB_H, c2] -> {  }
+
+#dep_war:
+[_PB_W, _PB_H, c2] -> {  }
+
+#relations:
+[_PB_W, _PB_H, c2] -> {  }
+
+#delta:
+[_PB_W, _PB_H, c2] -> {  }
+
+#######################################################################
+
+#######################################################################
+
+#normalized loop (0):
+
+#loop tile start
+
+#dim info analyze start
+
+#dim info analyze stop
+
+#delta analyze start
+
+#delta:
+[_PB_W, _PB_H, c2] -> {  }
+
+#dim [i0]: is bounded
+
+#dim [i1]: is bounded
+
+#delta analyze stop
+
+#create tile equations start
+
+#tile equations: {[d0, b0, c0, a1, a2] : exists b1, c1, b2, c2 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and b0 > 0 and b0 = b1 + b2 and c0 = c1 + c2 and ( 1 = 0  or a1 != 0  or a2 != 0  )  }
+
+#parallel free equation: {[d0, b0, c0, a1, a2] : exists b1, c1, b2, c2 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and b0 > 0 and b0 = b1 + b2 and c0 = c1 + c2 and ( 1 = 0  or a1 != 0  or a2 != 0  )  }
+
+#create tile equations stop
+
+#create hyperplanes start
+
+#hyperplane for dim parallel free: lexmin( {[d0 = 0, b0, c0, a1, a2] : a1 != 0 } * {[d0, b0, c0, a1, a2] : exists b1, c1, b2, c2 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and b0 > 0 and b0 = b1 + b2 and c0 = c1 + c2 and ( 1 = 0  or a1 != 0  or a2 != 0  )  } )
+
+#result: { [d0 = 0, b0 = 1, c0 = -2, a1 = 1, a2 = 0] }
+
+#hyperplane: { [a1 = 1, a2 = 0] }
+
+#hyperplane check: first hyperplane 
+
+#result: true
+
+#hyperplane for dim: lexmin( {[d0 = 0, b0, c0, a1, a2] : a1 != 0 } * {[d0, b0, c0, a1, a2] : exists b1, c1, b2, c2 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and b0 > 0 and b0 = b1 + b2 and c0 = c1 + c2 and ( 1 = 0  or a1 != 0  or a2 != 0  )  } )
+
+#result: { [d0 = 0, b0 = 1, c0 = -2, a1 = 1, a2 = 0] }
+
+#hyperplane: { [a1 = 1, a2 = 0] }
+
+#hyperplane check: { : exists c1, c2 : ( c1!=0 or c2!=0 ) and c2*1 = c1*1 and c2*0 = c1*0 } = {}
+
+#result: false
+
+#hyperplane for dim: lexmin( {[d0 = 0, b0, c0, a1, a2] : a2 != 0 } * {[d0, b0, c0, a1, a2] : exists b1, c1, b2, c2 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and b0 > 0 and b0 = b1 + b2 and c0 = c1 + c2 and ( 1 = 0  or a1 != 0  or a2 != 0  )  } )
+
+#result: { [d0 = 0, b0 = 1, c0 = -2, a1 = 0, a2 = 1] }
+
+#hyperplane: { [a1 = 0, a2 = 1] }
+
+#hyperplane check: { : exists c1, c2 : ( c1!=0 or c2!=0 ) and c2*0 = c1*1 and c2*1 = c1*0 } = {}
+
+#result: true
+
+#create hyperplanes stop
+
+#create spaces start
+
+#part: [_PB_W, _PB_H, c2] -> { [i0, i1] -> [  h0, h1, ii0 = i0, ii1 = i1] : exists bh0 : 1 * i0 + 0 * i1 - bh0 = 0 and 16 * h0 <= bh0 <= 16 * (h0 + 1) - 1 } 
+
+#part: [_PB_W, _PB_H, c2] -> { [i0, i1] -> [  h0, h1, ii0 = i0, ii1 = i1] : exists bh1 : 0 * i0 + 1 * i1 - bh1 = 0 and 16 * h1 <= bh1 <= 16 * (h1 + 1) - 1 } 
+
+#spaces mapper: [_PB_W, _PB_H, c2] -> { [i0, i1] -> [h0, h1, ii0 = i0, ii1 = i1] : -15 + i0 <= 16h0 <= i0 and -15 + i1 <= 16h1 <= i1 }
+
+#create spaces stop
+
+#create tile scop start
+
+#tile scop mapper: [_PB_W, _PB_H, c2] -> { S_0[i0, i1] -> S_0[h0, h1, ii0 = i0, ii1 = i1] : -15 + i0 <= 16h0 <= i0 and -15 + i1 <= 16h1 <= i1 }
+
+#tile scop delta: [_PB_W, _PB_H, c2] -> {  }
+
+#tile delta: (null)
+
+#create tile scop stop
+
+#tile delta analyze start
+
+#tile delta analyze stop
+
+#create wafefront equations start
+
+#wafefront equations: {[d0, b0, c0, a1, a2] : exists b1, b2 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and b0 > 0 and b0 = b1 + b2 }
+
+#create wafefront equations stop
+
+#calculate wafefront hyperplane start
+
+#wafefront hyperplane: lexmin( {[d0 = 0, b0, c0, a1, a2] : exists c1, c2 : ((c1 = -1 and a1 >= 0) or (c1 = 0 and a1 < 0)) and ((c2 = -1 and a2 >= 0) or (c2 = 0 and a2 < 0)) and c0 = c1 + c2 and a1 != 0 and a2 != 0} * {[d0, b0, c0, a1, a2] : exists b1, b2 : ((b1 = a1 and a1 >= 0) or (b1 = -a1 and a1 < 0)) and ((b2 = a2 and a2 >= 0) or (b2 = -a2 and a2 < 0)) and b0 > 0 and b0 = b1 + b2 } )
+
+#result: { [d0 = 0, b0 = 2, c0 = -2, a1 = 1, a2 = 1] }
+
+#wafefront hyperplane: { [a1 = 1, a2 = 1] }
+
+#calculate wafefront hyperplane stop
+
+#create parallel free schedule start
+
+#part: [_PB_W, _PB_H, c2] -> { S_0[i0, i1] -> [0, w0, h0, h1, tw0, i0, i1] : exists  bw0, bh0, bh1 : 1 = 1 and 1 * i0 + 0 * i1 - bh0 = 0 and 16 * h0 <= bh0 <= 16 * (h0 + 1) - 1 and 0 * i0 + 1 * i1 - bh1 = 0 and 16 * h1 <= bh1 <= 16 * (h1 + 1) - 1  and bw0 = 1 * bh0 + 1 * bh1 and tw0 = 0 and w0 = 0 } 
+
+#parallel free schedule: [_PB_W, _PB_H, c2] -> { S_0[i0, i1] -> [0, w0 = 0, h0, h1, tw0 = 0, i0, i1] : -15 + i0 <= 16h0 <= i0 and -15 + i1 <= 16h1 <= i1 }
+
+#create parallel free schedule stop
+
+#create code start
+
+#wafefront code: [_PB_W, _PB_H, c2] -> { S_0[i, j] -> [0, w0 = 0, h0, h1, tw0 = 0, i, j] : 0 <= i < _PB_W and 0 <= j < _PB_H and -15 + i <= 16h0 <= i and -15 + j <= 16h1 <= j }
+
+#create code stop
+
+#loop tile stop
+
+#######################################################################
+
+#######################################################################
+
+#global schedule:
+[_PB_W, _PB_H, c2] -> { S_0[i, j] -> [0, w0 = 0, h0, h1, tw0 = 0, i, j] : 0 <= i < _PB_W and 0 <= j < _PB_H and -15 + i <= 16h0 <= i and -15 + j <= 16h1 <= j }
+
+#######################################################################
+
+#######################################################################
+
+#Does global schedule respects oryginal loop RaW deps? -> True
+
+#Does global schedule respects oryginal loop WaW deps? -> True
+
+#Does global schedule respects oryginal loop WaR deps? -> True
+
+#######################################################################

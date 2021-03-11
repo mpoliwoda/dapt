@@ -1,0 +1,38 @@
+
+//dapt code:
+#define min(x,y)    ((x) < (y) ? (x) : (y))
+#define max(x,y)    ((x) > (y) ? (x) : (y))
+
+if (_PB_N >= 2) {
+  for (int w0 = max(-1, -((_PB_N + 13) / 16)); w0 <= (_PB_N - 1) / 16; w0 += 1) {
+    #pragma omp parallel for
+    for (int h0 = max(w0 - (_PB_N + 15) / 16 + 1, -((_PB_N + 13) / 16)); h0 <= min(0, w0); h0 += 1) {
+      if (_PB_N + 16 * h0 <= 2 && 16 * w0 + 15 >= _PB_N + 16 * h0) {
+        table[_PB_N - 2][_PB_N - 1] = max_score(table[_PB_N - 2][_PB_N - 1], table[_PB_N - 2][_PB_N - 2]);
+        table[_PB_N - 2][_PB_N - 1] = max_score(table[_PB_N - 2][_PB_N - 1], table[_PB_N - 1][_PB_N - 1]);
+        table[_PB_N - 2][_PB_N - 1] = max_score(table[_PB_N - 2][_PB_N - 1], table[_PB_N - 1][_PB_N - 2]);
+      } else if (w0 == -1) {
+        table[-16 * h0 - 2][-16 * h0 - 1] = max_score(table[-16 * h0 - 2][-16 * h0 - 1], table[-16 * h0 - 2][-16 * h0 - 2]);
+        table[-16 * h0 - 2][-16 * h0 - 1] = max_score(table[-16 * h0 - 2][-16 * h0 - 1], table[-16 * h0 - 1][-16 * h0 - 1]);
+        table[-16 * h0 - 2][-16 * h0 - 1] = max_score(table[-16 * h0 - 2][-16 * h0 - 1], table[-16 * h0 - 1][-16 * h0 - 2]);
+      }
+      for (int i0 = max(max(-_PB_N + 3, -16 * w0 + 16 * h0 - 13), 16 * h0); i0 <= min(0, 16 * h0 + 15); i0 += 1) {
+        for (int i1 = max(16 * w0 - 16 * h0, -i0 + 1); i1 <= min(_PB_N - 1, 16 * w0 - 16 * h0 + 15); i1 += 1) {
+          {
+            table[-i0][i1] = max_score(table[-i0][i1], table[-i0][i1 - 1]);
+            table[-i0][i1] = max_score(table[-i0][i1], table[-i0 + 1][i1]);
+          }
+          if (i0 + i1 >= 2) {
+            table[-i0][i1] = max_score(table[-i0][i1], table[-i0 + 1][i1 - 1] + match(seq[-i0], seq[i1]));
+          }
+          for (int i3 = -i0 + 1; i3 < i1; i3 += 1) {
+            table[-i0][i1] = max_score(table[-i0][i1], table[-i0][i3] + table[i3 + 1][i1]);
+          }
+          if (i0 + i1 == 1) {
+            table[-i0][-i0 + 1] = max_score(table[-i0][-i0 + 1], table[-i0 + 1][-i0]);
+          }
+        }
+      }
+    }
+  }
+}

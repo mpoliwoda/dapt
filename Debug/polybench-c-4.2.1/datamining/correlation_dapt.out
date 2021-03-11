@@ -1,0 +1,72 @@
+
+//dapt code:
+#define min(x,y)    ((x) < (y) ? (x) : (y))
+#define max(x,y)    ((x) > (y) ? (x) : (y))
+#define floord(n,d) (((n)<0) ? -((-(n)+(d)-1)/(d)) : (n)/(d))
+
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= (_PB_M - 1) / 16; ph0 += 1) {
+  for (int i1 = 16 * ph0; i1 <= min(_PB_M - 1, 16 * ph0 + 15); i1 += 1) {
+    {
+      mean[i1] = SCALAR_VAL(0.0);
+      for (int i3 = 0; i3 < _PB_N; i3 += 1) {
+        mean[i1] += data[i3][i1];
+      }
+    }
+    mean[i1] /= (float_n);
+  }
+}
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= (_PB_M - 1) / 16; ph0 += 1) {
+  for (int i1 = 16 * ph0; i1 <= min(_PB_M - 1, 16 * ph0 + 15); i1 += 1) {
+    {
+      stddev[i1] = SCALAR_VAL(0.0);
+      for (int i3 = 0; i3 < _PB_N; i3 += 1) {
+        stddev[i1] += ((data[i3][i1] - mean[i1]) * (data[i3][i1] - mean[i1]));
+      }
+      stddev[i1] /= (float_n);
+      stddev[i1] = SQRT_FUN(stddev[i1]);
+    }
+    stddev[i1] = ((stddev[i1] <= (eps)) ? SCALAR_VAL(1.0) : stddev[i1]);
+  }
+}
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_N - 1, 16); ph0 += 1) {
+  for (int h1 = 0; h1 <= (_PB_M - 1) / 16; h1 += 1) {
+    for (int i1 = 16 * ph0; i1 <= min(_PB_N - 1, 16 * ph0 + 15); i1 += 1) {
+      for (int i3 = 16 * h1; i3 <= min(_PB_M - 1, 16 * h1 + 15); i3 += 1) {
+        data[i1][i3] -= mean[i3];
+        data[i1][i3] /= (SQRT_FUN((float_n)) * stddev[i3]);
+      }
+    }
+  }
+}
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_M - 2, 16); ph0 += 1) {
+  for (int i1 = 16 * ph0; i1 <= min(_PB_M - 2, 16 * ph0 + 15); i1 += 1) {
+    corr[i1][i1] = SCALAR_VAL(1.0);
+    for (int i3 = i1 + 1; i3 <= min(15, _PB_M - 1); i3 += 1) {
+      {
+        corr[i1][i3] = SCALAR_VAL(0.0);
+        for (int i5 = 0; i5 < _PB_N; i5 += 1) {
+          corr[i1][i3] += (data[i5][i1] * data[i5][i3]);
+        }
+      }
+      corr[i3][i1] = corr[i1][i3];
+    }
+  }
+  for (int h1 = max(1, ph0); h1 <= (_PB_M - 1) / 16; h1 += 1) {
+    for (int i1 = 16 * ph0; i1 <= min(min(_PB_M - 2, 16 * ph0 + 15), 16 * h1 + 14); i1 += 1) {
+      for (int i3 = max(16 * h1, i1 + 1); i3 <= min(_PB_M - 1, 16 * h1 + 15); i3 += 1) {
+        {
+          corr[i1][i3] = SCALAR_VAL(0.0);
+          for (int i5 = 0; i5 < _PB_N; i5 += 1) {
+            corr[i1][i3] += (data[i5][i1] * data[i5][i3]);
+          }
+        }
+        corr[i3][i1] = corr[i1][i3];
+      }
+    }
+  }
+}
+corr[_PB_M - 1][_PB_M - 1] = SCALAR_VAL(1.0);

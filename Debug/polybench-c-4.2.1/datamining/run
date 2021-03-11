@@ -1,0 +1,2 @@
+../../dapt filename=./correlation.c size=16 method=1 --debug-print-on > correlation_dapt.out 2> correlation_dapt.dbg
+../../dapt filename=./covariance.c size=16 method=1 --debug-print-on > covariance_dapt.out 2> covariance_dapt.dbg

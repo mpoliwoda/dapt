@@ -1,0 +1,5 @@
+../../../dapt filename=./cholesky.c size=16 method=1 --debug-print-on > cholesky.out 2> cholesky.dbg
+../../../dapt filename=./durbin.c size=16 method=1 --debug-print-on > durbin.out 2> durbin.dbg
+../../../dapt filename=./gramschmidt.c size=16 method=1 --debug-print-on > gramschmidt.out 2> gramschmidt.dbg
+../../../dapt filename=./lu.c size=16 method=1 --debug-print-on > lu.out 2> lu.dbg
+../../../dapt filename=./trisolv.c size=16 method=1 --debug-print-on > trisolv.out 2> trisolv.dbg

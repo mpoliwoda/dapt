@@ -1,0 +1,4 @@
+../../dapt filename=./deriche_loop3.c size=16 method=1 --debug-print-on > deriche_loop3.out 2> deriche_loop3.dbg
+../../dapt filename=./deriche_loop6.c size=16 method=1 --debug-print-on > deriche_loop6.out 2> deriche_loop6.dbg
+../../dapt filename=./floyd-warshall.c size=16 method=1 --debug-print-on > floyd-warshall.out 2> floyd-warshall.dbg
+../../dapt filename=./nussinov.c size=16 method=1 --debug-print-on > nussinov.out 2> nussinov.dbg

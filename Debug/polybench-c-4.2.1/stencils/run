@@ -1,0 +1,6 @@
+../../dapt filename=./adi.c size=16 method=1 --debug-print-on > adi.out 2> adi.dbg
+../../dapt filename=./fdtd-2d.c size=16 method=1 --debug-print-on > fdtd-2d.out 2> fdtd-2d.dbg
+../../dapt filename=./heat-3d.c size=16 method=1 --debug-print-on > heat-3d.out 2> heat-3d.dbg
+../../dapt filename=./jacobi-1d.c size=16 method=1 --debug-print-on > jacobi-1d.out 2> jacobi-1d.dbg
+../../dapt filename=./jacobi-2d.c size=16 method=1 --debug-print-on > jacobi-2d.out 2> jacobi-2d.dbg
+../../dapt filename=./seidel-2d.c size=16 method=1 --debug-print-on > seidel-2d.out 2> seidel-2d.dbg

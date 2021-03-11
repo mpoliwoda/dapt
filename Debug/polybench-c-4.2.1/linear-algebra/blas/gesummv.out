@@ -1,0 +1,23 @@
+
+//dapt code:
+#define min(x,y)    ((x) < (y) ? (x) : (y))
+#define floord(n,d) (((n)<0) ? -((-(n)+(d)-1)/(d)) : (n)/(d))
+
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_N - 1, 16); ph0 += 1) {
+  for (int h1 = 0; h1 <= _PB_N / 16; h1 += 1) {
+    for (int i0 = 16 * ph0; i0 <= min(_PB_N - 1, 16 * ph0 + 15); i0 += 1) {
+      if (h1 == 0) {
+        tmp[i0] = SCALAR_VAL(0.0);
+        y[i0] = SCALAR_VAL(0.0);
+      }
+      for (int i2 = 16 * h1; i2 <= min(_PB_N - 1, 16 * h1 + 15); i2 += 1) {
+        tmp[i0] = ((A[i0][i2] * x[i2]) + tmp[i0]);
+        y[i0] = ((B[i0][i2] * x[i2]) + y[i0]);
+      }
+      if (16 * h1 + 15 >= _PB_N) {
+        y[i0] = (((alpha) * tmp[i0]) + ((beta) * y[i0]));
+      }
+    }
+  }
+}

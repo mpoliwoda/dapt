@@ -1,0 +1,6 @@
+../../../dapt filename=./gemm.c size=16 method=1 --debug-print-on > gemm.out 2> gemm.dbg
+../../../dapt filename=./gemver.c size=16 method=1 --debug-print-on > gemver.out 2> gemver.dbg
+../../../dapt filename=./gesummv.c size=16 method=1 --debug-print-on > gesummv.out 2> gesummv.dbg
+../../../dapt filename=./syr2k.c size=16 method=1 --debug-print-on > syr2k.out 2> syr2k.dbg
+../../../dapt filename=./syrk.c size=16 method=1 --debug-print-on > syrk.out 2> syrk.dbg
+../../../dapt filename=./trmm.c size=16 method=1 --debug-print-on > trmm.out 2> trmm.dbg

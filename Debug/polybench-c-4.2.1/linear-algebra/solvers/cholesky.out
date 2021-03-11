@@ -1,0 +1,47 @@
+
+//dapt code:
+#define min(x,y)    ((x) < (y) ? (x) : (y))
+#define max(x,y)    ((x) > (y) ? (x) : (y))
+#define floord(n,d) (((n)<0) ? -((-(n)+(d)-1)/(d)) : (n)/(d))
+
+if (_PB_N >= 1) {
+  for (int w0 = -2; w0 <= (3 * _PB_N - 3) / 16; w0 += 1) {
+    #pragma omp parallel for
+    for (int h0 = max(max(0, w0 + floord(-_PB_N + 1, 8) + 1), floord(w0 + 1, 3)); h0 <= min(w0 + 1, floord(_PB_N - 1, 16)); h0 += 1) {
+      for (int h1 = -h0 + (w0 + h0 + 1) / 2; h1 <= min(min(h0, w0 - h0), floord(_PB_N - 2, 16)); h1 += 1) {
+        if (h0 + 2 * h1 >= w0 + 1) {
+          for (int i0 = max(16 * h0, 16 * h1 + 1); i0 <= min(_PB_N - 1, 16 * h0 + 15); i0 += 1) {
+            for (int i2 = 16 * h1; i2 <= min(16 * h1 + 15, i0 - 1); i2 += 1) {
+              for (int i4 = 16 * w0 - 16 * h0 - 16 * h1; i4 <= 16 * w0 - 16 * h0 - 16 * h1 + 15; i4 += 1) {
+                A[i0][i2] -= (A[i0][i4] * A[i2][i4]);
+              }
+            }
+          }
+        } else {
+          if (3 * h0 == w0) {
+            A[16 * w0 / 3][16 * w0 / 3] = SQRT_FUN(A[16 * w0 / 3][16 * w0 / 3]);
+          }
+          for (int i0 = max(16 * h0, 8 * w0 - 8 * h0 + 1); i0 <= min(_PB_N - 1, 16 * h0 + 15); i0 += 1) {
+            {
+              for (int i2 = 8 * w0 - 8 * h0; i2 <= min(8 * w0 - 8 * h0 + 15, i0 - 1); i2 += 1) {
+                for (int i4 = 8 * w0 - 8 * h0; i4 < i2; i4 += 1) {
+                  A[i0][i2] -= (A[i0][i4] * A[i2][i4]);
+                }
+                A[i0][i2] /= A[i2][i2];
+              }
+              for (int i2 = 8 * w0 - 8 * h0; i2 <= min(8 * w0 - 8 * h0 + 15, i0 - 1); i2 += 1) {
+                A[i0][i0] -= (A[i0][i2] * A[i0][i2]);
+              }
+            }
+            if (3 * h0 == w0) {
+              A[i0][i0] = SQRT_FUN(A[i0][i0]);
+            }
+          }
+        }
+      }
+    }
+    if (16 * w0 + 3 == 3 * _PB_N) {
+      A[_PB_N - 1][_PB_N - 1] = SQRT_FUN(A[_PB_N - 1][_PB_N - 1]);
+    }
+  }
+}

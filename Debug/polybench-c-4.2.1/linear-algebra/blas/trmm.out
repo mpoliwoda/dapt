@@ -1,0 +1,28 @@
+
+//dapt code:
+#define min(x,y)    ((x) < (y) ? (x) : (y))
+#define max(x,y)    ((x) > (y) ? (x) : (y))
+#define floord(n,d) (((n)<0) ? -((-(n)+(d)-1)/(d)) : (n)/(d))
+
+#pragma omp parallel for
+for (int ph0 = 0; ph0 <= floord(_PB_N - 1, 16); ph0 += 1) {
+  for (int h1 = 0; h1 <= floord(_PB_M - 1, 16); h1 += 1) {
+    for (int h2 = h1; h2 < _PB_M / 16; h2 += 1) {
+      for (int i0 = 16 * h1; i0 <= min(16 * h1 + 15, 16 * h2 + 14); i0 += 1) {
+        for (int i1 = 16 * ph0; i1 <= min(_PB_N - 1, 16 * ph0 + 15); i1 += 1) {
+          for (int i3 = max(16 * h2, i0 + 1); i3 <= 16 * h2 + 15; i3 += 1) {
+            B[i0][i1] += (A[i3][i0] * B[i3][i1]);
+          }
+        }
+      }
+    }
+    for (int i0 = 16 * h1; i0 <= min(_PB_M - 1, 16 * h1 + 15); i0 += 1) {
+      for (int i1 = 16 * ph0; i1 <= min(_PB_N - 1, 16 * ph0 + 15); i1 += 1) {
+        for (int i3 = max(i0 + 1, -(_PB_M % 16) + _PB_M); i3 < _PB_M; i3 += 1) {
+          B[i0][i1] += (A[i3][i0] * B[i3][i1]);
+        }
+        B[i0][i1] = ((alpha) * B[i0][i1]);
+      }
+    }
+  }
+}
