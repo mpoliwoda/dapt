@@ -15,6 +15,7 @@ void read_dapt_params(dapt_params *daptParams, int argc, char *argv[]){
 	daptParams->sizeTimeTile = 0;
 	daptParams->sizesDim = 0;
 	daptParams->sizes = 0;
+	daptParams->sizesTime = 0;
 	daptParams->method = 1;
 	daptParams->filename = 0;
 	daptParams->mapfile = 0;
@@ -67,12 +68,20 @@ void read_dapt_params(dapt_params *daptParams, int argc, char *argv[]){
 		char buf[32];
 		daptParams->sizesDim = atoi(paramValue);
 		daptParams->sizes = (int*)malloc(daptParams->sizesDim*sizeof(int));
+		daptParams->sizesTime = (int*)malloc(daptParams->sizesDim*sizeof(int));
 		for(int i=0; i < daptParams->sizesDim; i++ ){
 			daptParams->sizes[i] = daptParams->size;
 			sprintf(buf, "size%i=",i+1);
 			paramValue = get_param_value(buf, argc, argv);
 			if(paramValue){
 				daptParams->sizes[i] = atoi(paramValue);
+			}
+
+			daptParams->sizesTime[i] = 1;
+			sprintf(buf, "sizetime%i=",i+1);
+			paramValue = get_param_value(buf, argc, argv);
+			if(paramValue){
+				daptParams->sizesTime[i] = atoi(paramValue);
 			}
 		}
 	}

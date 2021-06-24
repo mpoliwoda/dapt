@@ -1459,30 +1459,37 @@ static __isl_give isl_union_map * loop_tile_space_to_parallel_free_schedule(__is
 		space_Info* spaceInfo = &(loopTile->spaceInfo[spaceInfoPos]);
 		int* spaceInfoVector = spaceInfo->vector;
 		int spaceSize = loopTile->daptParams->size;
+		int spaceTimeSize = 1;
 
 		if(spaceInfoPos < loopTile->daptParams->sizesDim){
 			spaceSize = loopTile->daptParams->sizes[spaceInfoPos];
+			spaceTimeSize =  loopTile->daptParams->sizesTime[spaceInfoPos];
 		}
 
 		sprintf(&tmpNamesStr[strlen(tmpNamesStr)],", b%s", spaceInfo->spaceName);
+		sprintf(&tmpNamesStr[strlen(tmpNamesStr)],", t%s", spaceInfo->spaceName);
 
-		sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"and %i * %s", spaceInfoVector[0], loopTile->loopDimInfo[0].dimName);
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," and %i * %s", spaceInfoVector[0], loopTile->loopDimInfo[0].dimName);
 		for(int i=1; i<loopTile->loopDimSize; i++){
 			sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," + %i * %s", spaceInfoVector[i], loopTile->loopDimInfo[i].dimName);
 		}
-		sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," - b%s = 0 and ", spaceInfo->spaceName);
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," - b%s = 0", spaceInfo->spaceName);
 
-		sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"%i * %s", spaceSize, spaceInfo->spaceName);
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," and %i * %s", spaceSize, spaceInfo->spaceName);
 		sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," <= b%s <= ", spaceInfo->spaceName);
 		sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"%i * (%s + 1) - 1 ", spaceSize, spaceInfo->spaceName);
+
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," and %i * t%s", spaceTimeSize, spaceInfo->spaceName);
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," <= b%s <= ", spaceInfo->spaceName);
+		sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"%i * (t%s + 1) - 1", spaceTimeSize, spaceInfo->spaceName);
 	}
 
 	sprintf(&equationStr[strlen(equationStr)],"] : exists %s : 1 = 1 %s", tmpNamesStr, tmpEquationStr );
 
 	if(loopTile->wafefrontHyperplane!=0){
-		sprintf(&equationStr[strlen(equationStr)]," and b%s = %i * b%s", wfName, get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), 0)), loopTile->spaceInfo[0].spaceName);
+		sprintf(&equationStr[strlen(equationStr)]," and b%s = %i * t%s", wfName, get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), 0)), loopTile->spaceInfo[0].spaceName);
 		for(int spaceInfoPos=1; spaceInfoPos<loopTile->hyperplaneDimSize; spaceInfoPos++){
-			sprintf(&equationStr[strlen(equationStr)]," + %i * b%s", get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), spaceInfoPos)), loopTile->spaceInfo[spaceInfoPos].spaceName);
+			sprintf(&equationStr[strlen(equationStr)]," + %i * t%s", get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), spaceInfoPos)), loopTile->spaceInfo[spaceInfoPos].spaceName);
 		}
 
 		if(loopTile->daptParams->sizeTimeTile > 0  && loopTile->hyperplaneDimSize >= 2){
@@ -1627,22 +1634,29 @@ static __isl_give isl_union_map * loop_tile_space_to_wafefront_schedule(__isl_ta
 			space_Info* spaceInfo = &(loopTile->spaceInfo[spaceInfoPos]);
 			int* spaceInfoVector = spaceInfo->vector;
 			int spaceSize = loopTile->daptParams->size;
+			int spaceTimeSize = 1;
 
 			if(spaceInfoPos < loopTile->daptParams->sizesDim){
 				spaceSize = loopTile->daptParams->sizes[spaceInfoPos];
+				spaceTimeSize =  loopTile->daptParams->sizesTime[spaceInfoPos];
 			}
 
 			sprintf(&tmpNamesStr[strlen(tmpNamesStr)],", b%s", spaceInfo->spaceName);
+			sprintf(&tmpNamesStr[strlen(tmpNamesStr)],", t%s", spaceInfo->spaceName);
 
-			sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"and %i * %s", spaceInfoVector[0], loopTile->loopDimInfo[0].dimName);
+			sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," and %i * %s", spaceInfoVector[0], loopTile->loopDimInfo[0].dimName);
 			for(int i=1; i<loopTile->loopDimSize; i++){
 				sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," + %i * %s", spaceInfoVector[i], loopTile->loopDimInfo[i].dimName);
 			}
-			sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," - b%s = 0 and ", spaceInfo->spaceName);
+			sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," - b%s = 0", spaceInfo->spaceName);
 
-			sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"%i * %s", spaceSize, spaceInfo->spaceName);
+			sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," and %i * %s", spaceSize, spaceInfo->spaceName);
 			sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," <= b%s <= ", spaceInfo->spaceName);
-			sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"%i * (%s + 1) - 1 ", spaceSize, spaceInfo->spaceName);
+			sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"%i * (%s + 1) - 1", spaceSize, spaceInfo->spaceName);
+
+			sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," and %i * t%s", spaceTimeSize, spaceInfo->spaceName);
+			sprintf(&tmpEquationStr[strlen(tmpEquationStr)]," <= b%s <= ", spaceInfo->spaceName);
+			sprintf(&tmpEquationStr[strlen(tmpEquationStr)],"%i * (t%s + 1) - 1", spaceTimeSize, spaceInfo->spaceName);
 		}
 
 		sprintf(&equationStr[strlen(equationStr)],"] : exists %s : 1 = 1 %s", tmpNamesStr, tmpEquationStr );
@@ -1652,9 +1666,9 @@ static __isl_give isl_union_map * loop_tile_space_to_wafefront_schedule(__isl_ta
 	}
 
 	if(loopTile->wafefrontHyperplane!=0 && loopTile->hyperplaneDimSize >= 2){
-		sprintf(&equationStr[strlen(equationStr)]," and b%s = %i * b%s", wfName, get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), 0)), loopTile->spaceInfo[0].spaceName);
+		sprintf(&equationStr[strlen(equationStr)]," and b%s = %i * t%s", wfName, get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), 0)), loopTile->spaceInfo[0].spaceName);
 		for(int spaceInfoPos=1; spaceInfoPos<loopTile->hyperplaneDimSize; spaceInfoPos++){
-			sprintf(&equationStr[strlen(equationStr)]," + %i * b%s", get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), spaceInfoPos)), loopTile->spaceInfo[spaceInfoPos].spaceName);
+			sprintf(&equationStr[strlen(equationStr)]," + %i * t%s", get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), spaceInfoPos)), loopTile->spaceInfo[spaceInfoPos].spaceName);
 		}
 		sprintf(&equationStr[strlen(equationStr)]," and %s = %i * %s", wfName, get_pw_aff_value_to_int(isl_set_dim_min(isl_set_copy(loopTile->wafefrontHyperplane), 0)), loopTile->spaceInfo[0].spaceName);
 		for(int spaceInfoPos=1; spaceInfoPos<loopTile->hyperplaneDimSize; spaceInfoPos++){

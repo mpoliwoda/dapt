@@ -19,6 +19,7 @@ typedef struct dapt_params{
 	int sizeTimeTile;
 	int sizesDim;
 	int *sizes;
+	int *sizesTime;
 	int method;
 	char *filename;
 	char *mapfile;

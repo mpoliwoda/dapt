@@ -45,6 +45,8 @@ int main(int argc, char *argv[]) {
 		printf("\t%s%s%s\n", "[size=<int>]         ", tabs, "default size (default:16)");
 		printf("\t%s%s%s\n", "[sizes=<int>]        ", tabs, "number of spaces with specified size (default:0)");
 		printf("\t%s%s%s\n", "[size<int>=<int>]    ", tabs, "specifies size list for spaces, when sizes is set (default:empty list)");
+		printf("\t%s%s%s\n", "[sizetime<int>=<int>]", tabs, "specifies size list for time spaces, when sizes is set (default:empty list)");
+
 		printf("\t%s%s%s\n", "[sizetimetile=<int>] ", tabs, "specifies size for time tile (default:0)");
 		printf("\t%s%s%s\n", "[iteratortype=<typename>] ", tabs, "specifies iterator type (default:int)");
 
