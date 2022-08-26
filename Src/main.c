@@ -74,6 +74,8 @@ int main(int argc, char *argv[]) {
 
 	ctx = isl_ctx_alloc_with_pet_options();
 	pet_options_set_signed_overflow(ctx, PET_OVERFLOW_IGNORE);
+	pet_options_set_encapsulate_dynamic_control(ctx, 1);
+
 	isl_options_set_ast_iterator_type(ctx, daptParams.iteratortype);
 
 	petScop = pet_scop_extract_from_C_source(ctx, daptParams.filename , NULL);

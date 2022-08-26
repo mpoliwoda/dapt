@@ -84,7 +84,6 @@ char* codegen_macros_to_str(__isl_keep isl_union_map *scheduleMap, __isl_keep pe
 	printer = isl_printer_start_line(printer);
 	printer = isl_printer_end_line(printer);
 
-
 	codeStr = isl_printer_get_str(printer);
 
 	isl_printer_free(printer);
@@ -123,6 +122,7 @@ char* codegen_wavefront_to_str(__isl_keep isl_union_map *scheduleMap, __isl_keep
 		isl_ast_print_options* ast_options = isl_ast_print_options_alloc(ctx);
 		isl_printer *printer = isl_printer_to_str(ctx);
 		int format= isl_printer_get_output_format(printer);
+
 
 		ast_options = isl_ast_print_options_set_print_for(ast_options, &codegen_wavefront_print_for, &ompPragmaInfo);
 		ast_options = isl_ast_print_options_set_print_user(ast_options, &codegen_wavefront_print_user, 0);
@@ -189,7 +189,12 @@ static struct pet_stmt* codegen_wavefront_get_pet_stmt(pet_scop* pet, const char
     {
         struct pet_stmt* stmt = pet->stmts[i];
 
-        const char* stmt_label = isl_set_get_tuple_name(stmt->domain);
+        isl_set* stmt_domain = isl_set_copy(stmt->domain);
+        if (stmt->n_arg > 0){
+        	stmt_domain = isl_map_domain(isl_set_unwrap(stmt_domain));
+        }
+        const char* stmt_label = isl_set_get_tuple_name(stmt_domain);
+        isl_set_free(stmt_domain);
 
         if (NULL != stmt_label && 0 == strcmp(label, stmt_label))
         {
@@ -286,23 +291,7 @@ static __isl_give isl_printer* codegen_wavefront_print_for(__isl_take isl_printe
 
 	printer = isl_printer_indent(printer, 2);
 
-	if (isl_ast_node_get_type(body) == isl_ast_node_block){
-		isl_ast_node_list* block_statements = isl_ast_node_block_get_children(body);
-
-		for (int i = 0; i < isl_ast_node_list_n_ast_node(block_statements); ++i)
-		{
-			isl_ast_node* block_statement = isl_ast_node_list_get_ast_node(block_statements, i);
-
-			printer = isl_ast_node_print(block_statement, printer, isl_ast_print_options_copy(ast_options));
-
-			isl_ast_node_free(block_statement);
-		}
-
-		isl_ast_node_list_free(block_statements);
-	}
-	else{
-		printer = isl_ast_node_print(body, printer, isl_ast_print_options_copy(ast_options));
-	}
+	printer = isl_ast_node_print(body, printer, isl_ast_print_options_copy(ast_options));
 
 	printer = isl_printer_indent(printer, -2);
 

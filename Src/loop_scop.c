@@ -26,7 +26,7 @@ __isl_give  loop_scop* loop_scop_extract_from_pet_scop(__isl_keep pet_scop *petS
 	//loopScop->loopMap = isl_union_map_intersect_domain(loopScop->loopMap, isl_union_set_copy(loopScop->loopDomain));
 	loopScop->loopMap = isl_union_map_gist_domain(loopScop->loopMap, isl_union_set_copy(loopScop->loopDomain));
 	loopScop->loopReads = pet_scop_get_may_reads(petScop);
-	loopScop->loopWrites = pet_scop_get_must_writes(petScop);
+	loopScop->loopWrites = pet_scop_get_may_writes(petScop);
 
 	loopScop->ctx = isl_union_map_get_ctx(loopScop->loopMap);
 	loopScop->daptParams = daptparams;
