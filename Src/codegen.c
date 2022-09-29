@@ -243,7 +243,7 @@ static __isl_give isl_printer* codegen_wavefront_print_for(__isl_take isl_printe
 		const char *name = isl_id_get_name(id);
 		const char *type = isl_options_get_ast_iterator_type(isl_printer_get_ctx(printer));
 
-		if(ompPragmaInfo->isInParallelRegion == isl_bool_true && strstr(name, "h")!=0){
+		if(ompPragmaInfo->isInParallelRegion == isl_bool_true && ompPragmaInfo->levelInParallelLevel == 0){
 			ompPragmaInfo->levelInParallelLevel += 1;
 			isHyperplaneLevel = isl_bool_true;
 		}
