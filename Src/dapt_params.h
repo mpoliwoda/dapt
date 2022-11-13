@@ -34,6 +34,7 @@ typedef struct dapt_params{
 	isl_bool dapt_no_order_dims;
 	isl_bool dapt_unit_spacee_only;
 	isl_bool dapt_respects_deps;
+	isl_bool dapt_force_codegen;
 } dapt_params;
 
 void read_dapt_params(dapt_params *daptParams, int argc, char *argv[]);

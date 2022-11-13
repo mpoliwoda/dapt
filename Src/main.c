@@ -59,6 +59,7 @@ int main(int argc, char *argv[]) {
 		printf("\t%s%s%s\n", "--dapt-optimize-off        ", tabs, "turns off loop optimization");
 		printf("\t%s%s%s\n", "--dapt-no-order-dims       ", tabs, "turns off order dims from hyperplanes");
 		printf("\t%s%s%s\n", "--dapt-unit-spacee-only    ", tabs, "find only unit hyperplanes");
+		printf("\t%s%s%s\n", "--dapt-force-codegen    ", tabs, "force codegen");
 
 
 		printf("\t%s%s%s\n", "--debug-print-on           ", tabs, "print debug info to stderr");
@@ -131,7 +132,7 @@ int main(int argc, char *argv[]) {
 
 			loop_scop_check_schedule_respects_deps(loopScop, schedule);
 
-			if(daptParams.dapt_respects_deps == isl_bool_true){
+			if(daptParams.dapt_respects_deps == isl_bool_true || daptParams.dapt_force_codegen == isl_bool_true){
 				isl_printf_str("\n//dapt code:\n%s", codegen_macros_to_str(schedule, petScop));
 				isl_printf_str("%s", codegen_wavefront_to_str(schedule, petScop, 0, isl_bool_true));
 			}
