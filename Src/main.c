@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
 					}
 				}
 				else{
-					isl_printf_str("\n//dapt code:\n%s","//Error: see debug info");
+					printf("\n//dapt code:\n%s","//Error: Global schedule does not respects oryginal loop deps. See debug info");
 				}
 
 				loopTileList = loop_tile_list_free(loopTileList);
@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
 				isl_printf_str("%s", codegen_wavefront_to_str(schedule, petScop, 0, isl_bool_true));
 			}
 			else{
-				isl_printf_str("\n//dapt code:\n%s","//Error: see debug info");
+				printf("\n//dapt code:\n%s","//Error: Global schedule does not respects oryginal loop deps. See debug info");
 			}
 
 			loopScop = loop_scop_loop_scop_free(loopScop);
