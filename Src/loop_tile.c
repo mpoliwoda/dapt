@@ -1420,9 +1420,9 @@ static isl_stat loop_tile_parallel_free_schedule_for_map(__isl_take isl_map *map
 }
 
 static __isl_give isl_union_map * loop_tile_space_to_parallel_free_schedule(__isl_take isl_union_map *wafefrontScheduleMap, __isl_keep loop_tile_info* loopTile, const char *tupleName, char *mapToStr, id_name wfName){
-	char equationStr[65536];
+	char equationStr[65516];
 	char tmpNamesStr[512];
-	char tmpEquationStr[65536];
+	char tmpEquationStr[65516];
 
 	equationStr[0] = '\0';
 
