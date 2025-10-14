@@ -1,0 +1,4 @@
+.vscode
+Debug/Src/*.d
+Debug/Src/*.o
+Debug/dapt
