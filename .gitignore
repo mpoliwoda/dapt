@@ -1,4 +1,5 @@
 .vscode
-Debug/Src/*.d
-Debug/Src/*.o
-Debug/dapt
+debug/obj/*.d
+debug/obj/*.o
+debug/dapt
+debug/*.c
